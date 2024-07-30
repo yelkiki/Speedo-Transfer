@@ -5,11 +5,14 @@ import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.customerDTOs.UserDTO;
+import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
+import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.UserRepository;
+import com.example.speedotansfer.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,10 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService implements IAuth {
 
     private final UserRepository userRepository;
-//    private final AccountService accountService;
+    private final AccountService accountService;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final AccountRepository accountRepository;
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -44,7 +48,12 @@ public class AuthService implements IAuth {
             throw new UserNotFoundException("Customer Phone Number Already Exists");
 
         // Create an account -> To be replaced
-        Account account = new Account();
+        Account account = Account.builder()
+                .currency(Currency.EGY)
+                .balance(0)
+                .accountNumber("78888987987")
+                .build();
+        accountRepository.save(account);
 
         User user = User.builder().
                 firstName(registerDTO.getFirstName()).
@@ -57,8 +66,8 @@ public class AuthService implements IAuth {
                 country(registerDTO.getCountry()).
                 birthdate(registerDTO.getBirthDate()).
                 account(account).
-
                 build();
+
 
         user.setAccount(account);
 

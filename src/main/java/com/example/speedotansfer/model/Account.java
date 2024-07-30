@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Account {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(unique = true, nullable = false)
@@ -26,7 +26,7 @@ public class Account {
     private String accountNumber;
 
     @Column()
-    private double balance;
+    private double balance = 0;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

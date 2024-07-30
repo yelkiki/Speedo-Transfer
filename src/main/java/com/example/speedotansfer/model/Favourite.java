@@ -30,6 +30,4 @@ public class Favourite {
     @JoinColumn(name="favID", nullable=false)
     private User favouriteUser;
 
-
-
 }

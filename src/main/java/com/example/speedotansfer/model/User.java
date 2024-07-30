@@ -1,6 +1,7 @@
 package com.example.speedotansfer.model;
 
 
+import com.example.speedotansfer.dto.customerDTOs.UserDTO;
 import com.example.speedotansfer.enums.Country;
 import com.example.speedotansfer.enums.Gender;
 import jakarta.persistence.*;
@@ -62,7 +63,7 @@ public class User {
     private Country country;
 
     @Column(nullable = false)
-    private LocalDate birthday;
+    private LocalDate birthdate;
 
     @CreationTimestamp
     private final LocalDateTime creationTimeStamp = LocalDateTime.now();
@@ -84,6 +85,20 @@ public class User {
     private List<Favourite> fav;
 
     // momken add role for extra bonus
+
+    public UserDTO toDTO() {
+        return UserDTO.builder()
+                .firstName(firstName)
+                .lastName(lastname)
+                .username(username)
+                .email(email)
+                .gender(gender)
+                .phone(phone)
+                .birthDate(birthdate)
+                .accNumber(account.getAccountNumber())
+                .build();
+
+    }
 
 
 }

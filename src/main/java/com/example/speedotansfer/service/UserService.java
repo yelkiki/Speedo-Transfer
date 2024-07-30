@@ -38,8 +38,11 @@ public class UserService implements IUser {
 
 
     @Override
-    @Cacheable("customer")
-    public UserDTO getCustomerById(long id) throws UserNotFoundException {
+//    @Cacheable("customer")
+    public UserDTO getCustomerById(String token) throws UserNotFoundException {
+
+
+        long id = Long.parseLong(token);
         User customer = this.customerRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Customer not found"));
         return customer.toDTO();
     }

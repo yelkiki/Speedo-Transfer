@@ -30,7 +30,7 @@ public class UserService implements IUser {
         customer.setFirstName(updateCustomerDTO.getFirstName());
         customer.setLastname(updateCustomerDTO.getLastName());
         customer.setEmail(updateCustomerDTO.getEmail());
-        customer.setPhone(updateCustomerDTO.getPhone());
+        customer.setPhoneNumber(updateCustomerDTO.getPhoneNumber());
 
         return customer.toDTO();
 

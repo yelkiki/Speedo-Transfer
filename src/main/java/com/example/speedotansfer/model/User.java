@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -56,7 +56,7 @@ public class User {
     @Column(nullable = false,unique = true)
     @Max(11)
     @Pattern(regexp = "^(\\+201|01|00201)[0-2,5][0-9]{8}")
-    private String phone;
+    private String phoneNumber;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -93,7 +93,7 @@ public class User {
                 .username(username)
                 .email(email)
                 .gender(gender)
-                .phone(phone)
+                .phoneNumber(phoneNumber)
                 .birthDate(birthdate)
                 .accNumber(account.getAccountNumber())
                 .build();

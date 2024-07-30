@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService implements IAuth {
@@ -56,6 +58,7 @@ public class AuthService implements IAuth {
         accountRepository.save(account);
 
         User user = User.builder().
+                id(UUID.randomUUID()).
                 firstName(registerDTO.getFirstName()).
                 lastname(registerDTO.getLastName()).
                 username(registerDTO.getUsername()).

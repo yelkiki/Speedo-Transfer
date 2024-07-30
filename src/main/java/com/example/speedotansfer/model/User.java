@@ -27,10 +27,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue
     // 5aleeha rakam w auto increment (same LENGTH)
-    private UUID id = UUID.randomUUID();
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
     private String firstName;
@@ -54,7 +53,6 @@ public class User {
     private Gender gender;
 
     @Column(nullable = false,unique = true)
-    @Max(11)
     @Pattern(regexp = "^(\\+201|01|00201)[0-2,5][0-9]{8}")
     private String phoneNumber;
 
@@ -88,6 +86,7 @@ public class User {
 
     public UserDTO toDTO() {
         return UserDTO.builder()
+                .customerId(id)
                 .firstName(firstName)
                 .lastName(lastname)
                 .username(username)

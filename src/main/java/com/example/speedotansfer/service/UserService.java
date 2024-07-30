@@ -6,10 +6,14 @@ import com.example.speedotansfer.dto.customerDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.UserRepository;
+import com.example.speedotansfer.security.JwtUtils;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 
 @Service
@@ -17,11 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements IUser {
 
     private final UserRepository customerRepository;
-
+    private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public UserDTO updateCustomer(long id, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
+    public UserDTO updateCustomer(UUID id, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
 
         User customer = customerRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -42,9 +47,10 @@ public class UserService implements IUser {
     public UserDTO getCustomerById(String token) throws UserNotFoundException {
 
 
-        long id = Long.parseLong(token);
-        User customer = this.customerRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Customer not found"));
-        return customer.toDTO();
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User user = userRepository.findUserByEmail(email).orElseThrow(()-> new UserNotFoundException("User not found"));
+
+        return user.toDTO();
     }
 
 

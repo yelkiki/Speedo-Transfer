@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -24,11 +27,19 @@ public class Transaction {
     @Column(nullable = false)
     private boolean status;
 
+    @CreationTimestamp
+    private final LocalDateTime timeStamp = LocalDateTime.now();
 
 
-    /// btoo3 el relationships
-    // senderID
 
-    // RecieverID
+    @ManyToOne
+    @JoinColumn(name="sender_id", nullable=false)
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name="receiver_id", nullable=false)
+    private User receiver;
+
+
 
 }

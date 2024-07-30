@@ -1,8 +1,7 @@
 package com.example.speedotansfer.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,20 @@ import lombok.NoArgsConstructor;
 // Later
 public class Favourite {
 
-    // userID
+    // try to make user1,user2 both id
+    @Id
+    private Long id;
 
-    // loved User
+    // userID
+    @ManyToOne
+    @JoinColumn(name="userID", nullable=false)
+    private User user;
+
+
+    @ManyToOne
+    @JoinColumn(name="favID", nullable=false)
+    private User favouriteUser;
+
+
+
 }

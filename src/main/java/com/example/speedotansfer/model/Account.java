@@ -1,6 +1,7 @@
 package com.example.speedotansfer.model;
 
 
+import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -26,6 +27,13 @@ public class Account {
 
     @Column()
     private double balance;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Currency currency = Currency.EGY;
+
+    @OneToOne(mappedBy = "account")
+    private User user;
 
     // relation with account
 }

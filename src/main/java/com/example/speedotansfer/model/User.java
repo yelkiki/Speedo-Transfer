@@ -11,8 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -24,6 +28,7 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue
+    // 5aleeha rakam w auto increment (same LENGTH)
     private UUID id = UUID.randomUUID();
 
     @Column(nullable = false)
@@ -59,7 +64,24 @@ public class User {
     @Column(nullable = false)
     private LocalDate birthday;
 
-    // add relationsships with account/favourite/transaction
+    @CreationTimestamp
+    private final LocalDateTime creationTimeStamp = LocalDateTime.now();
+
+    @UpdateTimestamp
+    private final LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    private Account account;
+
+
+    @OneToMany(mappedBy = "sender")
+    private List<Transaction> sentTransactions;
+
+    @OneToMany(mappedBy = "receiver")
+    private List<Transaction> receivedTransactions;
+
+    @OneToMany(mappedBy = "favouriteUser")
+    private List<Favourite> fav;
 
     // momken add role for extra bonus
 

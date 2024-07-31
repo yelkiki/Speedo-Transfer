@@ -8,7 +8,7 @@ import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import java.util.UUID;
 
 public interface IUser {
-    public UserDTO updateCustomer(UUID id, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException;
+    public UserDTO updateCustomer(String token, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException;
 
     public UserDTO getCustomerById(String token) throws UserNotFoundException;
 

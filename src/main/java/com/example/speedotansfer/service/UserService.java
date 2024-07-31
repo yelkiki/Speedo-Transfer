@@ -25,28 +25,29 @@ public class UserService implements IUser {
 
     @Override
     @Transactional
-    public UserDTO updateCustomer(UUID id, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
+    public UserDTO updateCustomer(String token, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
 
-        User customer = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User user = userRepository.findUserByEmail(email).orElseThrow(()-> new UserNotFoundException("User not found"));
 
         if (updateCustomerDTO.getEmail() != null) {
-            customer.setEmail(updateCustomerDTO.getEmail());
+            user.setEmail(updateCustomerDTO.getEmail());
         }
         if (updateCustomerDTO.getFirstName() != null) {
-            customer.setFirstName(updateCustomerDTO.getFirstName());
+            user.setFirstName(updateCustomerDTO.getFirstName());
         }
         if (updateCustomerDTO.getLastName() != null) {
-            customer.setLastname(updateCustomerDTO.getLastName());
+            user.setLastname(updateCustomerDTO.getLastName());
         }
 
         if (updateCustomerDTO.getUsername() != null){
-            customer.setUsername(updateCustomerDTO.getUsername());
+            user.setUsername(updateCustomerDTO.getUsername());
         }
         if (updateCustomerDTO.getPhoneNumber() != null){
-            customer.setPhoneNumber(updateCustomerDTO.getPhoneNumber());
+            user.setPhoneNumber(updateCustomerDTO.getPhoneNumber());
         }
 
-        return customer.toDTO();
+        return user.toDTO();
 
     }
 

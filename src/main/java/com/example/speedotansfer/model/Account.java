@@ -27,7 +27,7 @@ public class Account {
     @Column()
     private double balance = 0;
 
-    @Column(nullable = false)
+    @Column()
     @Enumerated(EnumType.STRING)
     private Currency currency = Currency.EGY;
 

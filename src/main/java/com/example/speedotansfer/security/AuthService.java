@@ -12,7 +12,6 @@ import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.UserRepository;
-import com.example.speedotansfer.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +32,6 @@ import java.util.UUID;
 public class AuthService implements IAuth {
 
     private final UserRepository userRepository;
-    private final AccountService accountService;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;

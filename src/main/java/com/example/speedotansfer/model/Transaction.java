@@ -1,5 +1,6 @@
 package com.example.speedotansfer.model;
 
+import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,17 @@ public class Transaction {
     @JoinColumn(name="receiver_id", nullable=false)
     private User receiver;
 
+
+    public TransferResponseDTO toDto(){
+        return TransferResponseDTO.builder()
+                .transactionId(this.id)
+                .fromAccount(this.sender.getUsername())
+                .toAccount(this.receiver.getUsername())
+                .amount(this.amount)
+                .status(this.status)
+                .timestamp(this.timeStamp)
+                .build();
+    }
 
 
 }

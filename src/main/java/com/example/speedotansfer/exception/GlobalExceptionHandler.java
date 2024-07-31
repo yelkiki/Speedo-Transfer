@@ -1,5 +1,6 @@
 package com.example.speedotansfer.exception;
 
+import com.example.speedotansfer.exception.custom.InsufficientAmountException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.exception.response.ErrorDetails;
@@ -94,6 +95,12 @@ public class GlobalExceptionHandler{
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now()
                 , String.format("Incorrect email or password credentials provided. [ %s ]", exception.getMessage()),
                 request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InsufficientAmountException.class)
+    public ResponseEntity<Object> InsufficientAmountExceptionHandling(InsufficientAmountException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
 

@@ -8,8 +8,7 @@ import java.util.UUID;
 
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-    User findCustomerByUsername(String username);
-    User findTopByOrderByCreationTimeStampDesc();
+    Optional<User> findUserByUsername(String username);
     Optional<User> findUserByEmail(String email);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);

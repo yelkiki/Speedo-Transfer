@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 
 
@@ -88,12 +89,12 @@ public class GlobalExceptionHandler{
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
-//    public ResponseEntity<Object> authenticationExceptionHandling(AuthenticationException exception, WebRequest request) {
-//        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now()
-//                , String.format("Incorrect email or password credentials provided. [ %s ]", exception.getMessage()),
-//                request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
-//    }
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<Object> authenticationExceptionHandling(AuthenticationException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now()
+                , String.format("Incorrect email or password credentials provided. [ %s ]", exception.getMessage()),
+                request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
+    }
 
 
 }

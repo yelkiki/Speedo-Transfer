@@ -20,7 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService implements IUser {
 
-    private final UserRepository customerRepository;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
 
@@ -28,14 +27,24 @@ public class UserService implements IUser {
     @Transactional
     public UserDTO updateCustomer(UUID id, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
 
-        User customer = customerRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User customer = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        if (updateCustomerDTO.getEmail() != null) {
+            customer.setEmail(updateCustomerDTO.getEmail());
+        }
+        if (updateCustomerDTO.getFirstName() != null) {
+            customer.setFirstName(updateCustomerDTO.getFirstName());
+        }
+        if (updateCustomerDTO.getLastName() != null) {
+            customer.setLastname(updateCustomerDTO.getLastName());
+        }
 
-        customer.setUsername(updateCustomerDTO.getUsername());
-        customer.setFirstName(updateCustomerDTO.getFirstName());
-        customer.setLastname(updateCustomerDTO.getLastName());
-        customer.setEmail(updateCustomerDTO.getEmail());
-        customer.setPhoneNumber(updateCustomerDTO.getPhoneNumber());
+        if (updateCustomerDTO.getUsername() != null){
+            customer.setUsername(updateCustomerDTO.getUsername());
+        }
+        if (updateCustomerDTO.getPhoneNumber() != null){
+            customer.setPhoneNumber(updateCustomerDTO.getPhoneNumber());
+        }
 
         return customer.toDTO();
 
@@ -45,8 +54,6 @@ public class UserService implements IUser {
     @Override
 //    @Cacheable("customer")
     public UserDTO getCustomerById(String token) throws UserNotFoundException {
-
-
         String email = jwtUtils.getUserNameFromJwtToken(token);
         User user = userRepository.findUserByEmail(email).orElseThrow(()-> new UserNotFoundException("User not found"));
 

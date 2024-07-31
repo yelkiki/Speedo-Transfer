@@ -22,7 +22,6 @@ public class Account {
     private long id;
 
     @Column(unique = true, nullable = false)
-    // auto Generated --- later 12 numbers
     private String accountNumber;
 
     @Column()

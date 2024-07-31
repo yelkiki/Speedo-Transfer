@@ -36,5 +36,4 @@ public class RegisterDTO {
     private Country country;
     @NotNull
     private LocalDate birthDate;
-
 }

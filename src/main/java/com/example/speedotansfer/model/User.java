@@ -6,7 +6,6 @@ import com.example.speedotansfer.enums.Country;
 import com.example.speedotansfer.enums.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +35,6 @@ public class User {
 
     @Column(nullable = false)
     private String lastname;
-
 
     @Column(unique = true, nullable = false)
     private String username;

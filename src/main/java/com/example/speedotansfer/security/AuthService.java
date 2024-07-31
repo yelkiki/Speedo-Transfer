@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -49,11 +51,14 @@ public class AuthService implements IAuth {
         if (userRepository.existsByPhoneNumber(registerDTO.getPhoneNumber()))
             throw new UserNotFoundException("Customer Phone Number Already Exists");
 
+        if (!Objects.equals(registerDTO.getPassword(), registerDTO.getConfirmPassword()))
+            throw new UserNotFoundException("Customer Password Not Matched");
+
         // Create an account -> To be replaced
         Account account = Account.builder()
                 .currency(Currency.EGY)
                 .balance(0)
-                .accountNumber("78888987987")
+                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
                 .build();
         accountRepository.save(account);
 

@@ -24,7 +24,7 @@ public class UserController {
         return userService.getCustomerById(trimmedToken);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public UserDTO updateUser(@RequestHeader("Authorization") String token,@RequestBody UpdateUserDTO userDTO) throws UserNotFoundException {
         String trimmedToken = token.substring(7).trim();
         return userService.updateCustomer(trimmedToken,userDTO);

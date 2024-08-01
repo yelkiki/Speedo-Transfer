@@ -1,4 +1,4 @@
-package com.example.speedotansfer.dto.customerDTOs;
+package com.example.speedotansfer.dto.userDTOs;
 
 import com.example.speedotansfer.enums.Gender;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,6 @@ public class UserDTO {
     private Gender gender;
     private LocalDate birthDate;
     private String username;
-    private String accNumber;
 
 }
 

@@ -1,11 +1,9 @@
 package com.example.speedotansfer.model;
 
 
-import com.example.speedotansfer.dto.customerDTOs.AccountDTO;
+import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +30,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private Currency currency = Currency.EGY;
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     private User user;
 
     public AccountDTO toDTO(){

@@ -4,7 +4,7 @@ package com.example.speedotansfer.security;
 import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
-import com.example.speedotansfer.dto.customerDTOs.UserDTO;
+import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
@@ -52,14 +52,6 @@ public class AuthService implements IAuth {
         if (!Objects.equals(registerDTO.getPassword(), registerDTO.getConfirmPassword()))
             throw new UserNotFoundException("Customer Password Not Matched");
 
-        // Create an account -> To be replaced
-        Account account = Account.builder()
-                .currency(Currency.EGY)
-                .balance(100)
-                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
-                .build();
-        accountRepository.save(account);
-
         User user = User.builder().
                 id(UUID.randomUUID()).
                 firstName(registerDTO.getFirstName()).
@@ -71,13 +63,21 @@ public class AuthService implements IAuth {
                 phoneNumber(registerDTO.getPhoneNumber()).
                 country(registerDTO.getCountry()).
                 birthdate(registerDTO.getBirthDate()).
-                account(account).
                 build();
 
-
-        user.setAccount(account);
-
         userRepository.save(user);
+
+        Account account = Account.builder()
+                .currency(Currency.EGY)
+                .balance(100)
+                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
+                .build();
+
+        account.setUser(user);
+
+        accountRepository.save(account);
+
+        System.out.println(account);
 
         return user.toDTO();
     }

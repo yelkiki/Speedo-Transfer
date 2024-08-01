@@ -10,6 +10,7 @@ import com.example.speedotansfer.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,25 +24,26 @@ public class FavouriteService implements IFavourite{
     @Override
     public Favourite addToFavourites(String token, CreateFavouriteDTO createFavouriteDTO) throws UserNotFoundException {
 
+
+
+        token = token.substring(7);
         String email = jwtUtils.getUserNameFromJwtToken(token);
-        System.out.println(email);
         User user = userRepository.findUserByEmail(email).
                 orElseThrow(()-> new UserNotFoundException("User not found"));
-        System.out.println(user);
-        // I need to get user id from account Number
-//        User favUser = userRepository.getUserFromAccountNumber(createFavouriteDTO.getAccountNumber())
-//                .orElseThrow(()-> new UserNotFoundException("User With This Account Number does not exist "));
-        User favUser = user;
 
-        System.out.println(favUser);
-        Favourite favourite = Favourite.builder()
+
+        User favUser = userRepository.getUserFromAccountNumber(createFavouriteDTO.getAccountNumber())
+                .orElseThrow(()-> new UserNotFoundException("User With This Account Number does not exist "));
+
+
+        Favourite favourite = Favourite
+                .builder()
                 .user(user)
                 .favouriteUser(favUser)
+                .addedAt(LocalDateTime.now())
                 .build();
 
         return favouriteRepository.save(favourite);
-
-
     }
 
     @Override

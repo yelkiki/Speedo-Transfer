@@ -1,16 +1,13 @@
 package com.example.speedotansfer.model;
 
 
-import com.example.speedotansfer.dto.customerDTOs.UserDTO;
+import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.enums.Country;
 import com.example.speedotansfer.enums.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,7 +16,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 @Builder
@@ -71,7 +69,7 @@ public class User {
     @UpdateTimestamp
     private final LocalDateTime updatedAt = LocalDateTime.now();
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(mappedBy = "user")
     private Account account;
 
 
@@ -96,7 +94,6 @@ public class User {
                 .gender(gender)
                 .phoneNumber(phoneNumber)
                 .birthDate(birthdate)
-                .accNumber(account.getAccountNumber())
                 .build();
 
     }

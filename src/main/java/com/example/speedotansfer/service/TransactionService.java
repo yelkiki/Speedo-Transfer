@@ -1,6 +1,6 @@
 package com.example.speedotansfer.service;
 
-import com.example.speedotansfer.dto.customerDTOs.AccountDTO;
+import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithUsernameDTO;

@@ -1,19 +1,15 @@
 package com.example.speedotansfer.service;
 
 
-import com.example.speedotansfer.dto.customerDTOs.UpdateUserDTO;
-import com.example.speedotansfer.dto.customerDTOs.UserDTO;
+import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
+import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 
 @Service

@@ -1,10 +1,9 @@
 package com.example.speedotansfer.contoller;
 
 
-import com.example.speedotansfer.dto.customerDTOs.UpdateUserDTO;
-import com.example.speedotansfer.dto.customerDTOs.UserDTO;
+import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
+import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
-import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

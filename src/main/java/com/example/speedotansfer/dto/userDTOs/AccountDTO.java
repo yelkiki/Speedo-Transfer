@@ -1,4 +1,4 @@
-package com.example.speedotansfer.dto.customerDTOs;
+package com.example.speedotansfer.dto.userDTOs;
 
 import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.EnumType;

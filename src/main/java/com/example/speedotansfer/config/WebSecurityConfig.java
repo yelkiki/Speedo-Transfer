@@ -37,7 +37,6 @@ public class WebSecurityConfig {
                                 "/api/auth/**", "/swagger-ui/**","/h2-console/**",
                                 "/v3/api-docs/**", "/swagger-resources/**").
                         permitAll().anyRequest().authenticated());
-
         http.authenticationProvider(authenticationProvider());
         // To Run H2-Console
         http.headers().frameOptions().disable();

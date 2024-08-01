@@ -7,20 +7,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 @Data
 @Entity
-@Table(name = "favourite")
+@Table(name = "favourites")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-// Later
-public class Favourite {
+public class Favourite implements Serializable {
 
-    // try to make user1,user2 both id
+//    @EmbeddedId
+//    private FavouriteId id;
+//
+//    @Column(name="test")
+//    private String test;
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // userID
     @ManyToOne
     @JoinColumn(name="userID", nullable=false)
     private User user;
@@ -31,3 +38,4 @@ public class Favourite {
     private User favouriteUser;
 
 }
+

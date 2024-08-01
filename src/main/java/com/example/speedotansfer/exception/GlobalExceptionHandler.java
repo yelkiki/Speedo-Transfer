@@ -8,6 +8,7 @@ import com.example.speedotansfer.exception.response.ValidationFailedResponse;
 import com.example.speedotansfer.exception.response.ViolationErrors;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -103,6 +104,11 @@ public class GlobalExceptionHandler{
                 request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> dataIntegrityViolationExceptionHandling(DataIntegrityViolationException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
 
 }
 

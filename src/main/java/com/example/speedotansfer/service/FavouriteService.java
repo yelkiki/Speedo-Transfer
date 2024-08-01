@@ -8,6 +8,7 @@ import com.example.speedotansfer.repository.FavouriteRepository;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,8 +24,6 @@ public class FavouriteService implements IFavourite{
 
     @Override
     public Favourite addToFavourites(String token, CreateFavouriteDTO createFavouriteDTO) throws UserNotFoundException {
-
-
 
         token = token.substring(7);
         String email = jwtUtils.getUserNameFromJwtToken(token);
@@ -42,8 +41,11 @@ public class FavouriteService implements IFavourite{
                 .favouriteUser(favUser)
                 .addedAt(LocalDateTime.now())
                 .build();
-
-        return favouriteRepository.save(favourite);
+        try {
+            return favouriteRepository.save(favourite);
+        }catch (DataIntegrityViolationException e){
+            throw new DataIntegrityViolationException("Favourite User already exists");
+        }
     }
 
     @Override

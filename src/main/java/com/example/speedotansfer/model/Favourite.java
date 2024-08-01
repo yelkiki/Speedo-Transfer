@@ -16,25 +16,18 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Favourite implements Serializable {
+public class Favourite {
 
-//    @EmbeddedId
-//    private FavouriteId id;
-//
-//    @Column(name="test")
-//    private String test;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @EmbeddedId
+    private FavouriteId id;
 
     @ManyToOne
-    @JoinColumn(name="userID", nullable=false)
+    @JoinColumn(name="userId", nullable=false, insertable = false, updatable = false)
     private User user;
 
 
     @ManyToOne
-    @JoinColumn(name="favID", nullable=false)
+    @JoinColumn(name="favId", nullable=false, insertable = false, updatable = false)
     private User favouriteUser;
 
 }

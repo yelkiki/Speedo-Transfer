@@ -27,6 +27,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class User {
     // 5aleeha rakam w auto increment (same LENGTH)
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private long internalId;
+
     @Id
     private UUID id;
 

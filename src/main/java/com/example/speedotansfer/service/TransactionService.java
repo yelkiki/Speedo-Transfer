@@ -1,152 +1,120 @@
-//package com.example.speedotansfer.service;
-//
-//import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
-//import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithUsernameDTO;
-//import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
-//import com.example.speedotansfer.exception.custom.InsufficientAmountException;
-//import com.example.speedotansfer.exception.custom.UserNotFoundException;
-//import com.example.speedotansfer.model.Account;
-//import com.example.speedotansfer.model.Transaction;
-//import com.example.speedotansfer.model.User;
-//import com.example.speedotansfer.repository.AccountRepository;
-//import com.example.speedotansfer.repository.TransactionRepository;
-//import com.example.speedotansfer.repository.UserRepository;
-//import com.example.speedotansfer.security.JwtUtils;
-//import jakarta.transaction.Transactional;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.LocalDateTime;
-//import java.util.List;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class TransactionService implements ITransaction{
-//
-//    private final TransactionRepository transactionRepository;
-//    private final AccountRepository accountRepository;
-//    private final UserRepository userRepository;
-//    private final JwtUtils jwtUtils;
-//
-//
-//    @Override
-//    public boolean deposit(String accountNumber,double amount) throws UserNotFoundException {
-//        Account account = accountRepository.findAccountByAccountNumber(accountNumber).orElse(null);
-//        if (account == null) {
-//            throw new UserNotFoundException("Could not find your account");
-//        }
-//        account.setBalance(account.getBalance() + amount);
-//        accountRepository.save(account);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean withdraw(String accountNumber,double amount) throws InsufficientAmountException, UserNotFoundException {
-//
-//        Account account = accountRepository.findAccountByAccountNumber(accountNumber).orElse(null);
-//        if (account == null) {
-//            throw new UserNotFoundException("Could not find your account");
-//        }
-//        if (account.getBalance() < amount){
-//            throw new InsufficientAmountException("Insufficient Amount to Withdraw");
-//        }
-//        account.setBalance(account.getBalance() - amount);
-//        accountRepository.save(account);
-//        return true;
-//
-//    }
-//
-//    @Override
-//    public double getBalance(String token) throws UserNotFoundException {
-//        String email = jwtUtils.getUserNameFromJwtToken(token);
-//        String accountNumber = userRepository.findAccountNumberByEmail(email);
-//        if (accountNumber == null) {
-//            throw new UserNotFoundException("Could not find Account");
-//        }
-//        Account account = accountRepository.findAccountByAccountNumber(accountNumber).orElse(null);
-//        if (account == null) {
-//            throw new UserNotFoundException("Invalid Account Number");
-//        }
-//        return account.getBalance();
-//    }
-//
-//
-//
-//    @Override
-//    @Transactional
-//    public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException {
-//
-//        // Extracting accountNumber from Token
-//        String email = jwtUtils.getUserNameFromJwtToken(token);
-//        String accountNumber = userRepository.findAccountNumberByEmail(email);
-//
-//        // Making sure both sender and receiver Do EXIST
-//        User sender = userRepository.findUserByAccountNumber(accountNumber).orElseThrow(()-> new UserNotFoundException("Could not find Sender"));
-//        User receiver = userRepository.findUserByAccountNumber(sendMoneyWithAccNumberDTO.getAccountNumber()).orElseThrow(()-> new UserNotFoundException("Could not find Reciever"));
-//        if (withdraw(accountNumber,sendMoneyWithAccNumberDTO.getAmount())){
-//            if (deposit(sendMoneyWithAccNumberDTO.getAccountNumber(),sendMoneyWithAccNumberDTO.getAmount())){
-//
-//                Transaction transaction = transactionRepository.save(Transaction.builder()
-//                                .amount(sendMoneyWithAccNumberDTO.getAmount())
-//                                .sender(sender)
-//                                .receiver(receiver)
-//                                .status(true)
-//                        .build());
-//                return transaction.toDto();
-//            }
-//            // failed to deposit but withdrawn already
-//            deposit(accountNumber,sendMoneyWithAccNumberDTO.getAmount());
-//            Transaction transaction = transactionRepository.save(Transaction.builder()
-//                    .amount(sendMoneyWithAccNumberDTO.getAmount())
-//                    .sender(sender)
-//                    .receiver(receiver)
-//                    .status(false)
-//                    .build());
-//            return transaction.toDto();
-//        }else {
-//            throw new InsufficientAmountException("Could Not Do Transaction");
-//        }
-//
-//    }
-//
-//    @Override
-//    @Transactional
-//    public TransferResponseDTO transferUsingUsername(String token, SendMoneyWithUsernameDTO sendMoneyWithUsernameDTO) throws InsufficientAmountException, UserNotFoundException {
-//        // Extracting accountNumber from Token
-//        String email = jwtUtils.getUserNameFromJwtToken(token);
-//        String accountNumber = userRepository.findAccountNumberByEmail(email);
-//
-//        // Making sure both sender and receiver Do EXIST
-//        User sender = userRepository.findUserByEmail(email).orElseThrow(()-> new UserNotFoundException("Could not find Sender"));
-//        User receiver = userRepository.findUserByUsername(sendMoneyWithUsernameDTO.getUsername()).orElseThrow(()-> new UserNotFoundException("Could not find Reciever"));
-//        if (withdraw(sender.getAccount().getAccountNumber(),sendMoneyWithUsernameDTO.getAmount())){
-//            if (deposit(receiver.getAccount().getAccountNumber(),sendMoneyWithUsernameDTO.getAmount())){
-//
-//                Transaction transaction = transactionRepository.save(Transaction.builder()
-//                        .amount(sendMoneyWithUsernameDTO.getAmount())
-//                        .sender(sender)
-//                        .receiver(receiver)
-//                        .status(true)
-//                        .build());
-//                return transaction.toDto();
-//            }
-//            // failed to deposit but withdrawn already
-//            deposit(accountNumber,sendMoneyWithUsernameDTO.getAmount());
-//            Transaction transaction = transactionRepository.save(Transaction.builder()
-//                    .amount(sendMoneyWithUsernameDTO.getAmount())
-//                    .sender(sender)
-//                    .receiver(receiver)
-//                    .status(false)
-//                    .build());
-//            return transaction.toDto();
-//        }else {
-//            throw new InsufficientAmountException("Could Not Do Transaction");
-//        }
-//    }
-//
-//    @Override
-//    //////////////////////// to be done
-//    public List<TransferResponseDTO> getHistory(String token) {
-//        return List.of();
-//    }
-//}
+package com.example.speedotansfer.service;
+
+import com.example.speedotansfer.dto.customerDTOs.AccountDTO;
+import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
+import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
+import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithUsernameDTO;
+import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
+import com.example.speedotansfer.exception.custom.InsufficientAmountException;
+import com.example.speedotansfer.exception.custom.UserNotFoundException;
+import com.example.speedotansfer.model.Account;
+import com.example.speedotansfer.model.Transaction;
+import com.example.speedotansfer.model.User;
+import com.example.speedotansfer.repository.AccountRepository;
+import com.example.speedotansfer.repository.TransactionRepository;
+import com.example.speedotansfer.repository.UserRepository;
+import com.example.speedotansfer.security.JwtUtils;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class TransactionService implements ITransaction{
+
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
+    private final JwtUtils jwtUtils;
+
+
+    @Override
+    public AccountDTO getBalance(String token) throws UserNotFoundException {
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
+
+        return user.getAccount().toDTO();
+    }
+
+
+    @Override
+    @Transactional
+    public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException {
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User sender = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
+
+        Account receiverAccount = accountRepository.findAccountByAccountNumber(sendMoneyWithAccNumberDTO.getAccountNumber()).orElseThrow(() -> new UserNotFoundException("Could not find receiver's account 1"));
+        Account senderAccount = sender.getAccount();
+
+        User receiver = userRepository.findUserByAccount(receiverAccount).orElseThrow(() -> new UserNotFoundException("Could not find receiver's account 2"));
+
+        if (senderAccount.getBalance() < sendMoneyWithAccNumberDTO.getAmount()) {
+            throw new InsufficientAmountException("Insufficient funds");
+        }else {
+            senderAccount.setBalance(senderAccount.getBalance()-sendMoneyWithAccNumberDTO.getAmount());
+            receiverAccount.setBalance(receiverAccount.getBalance()+sendMoneyWithAccNumberDTO.getAmount());
+            Transaction transaction = Transaction.builder()
+                    .status(true)
+                    .receiver(receiver)
+                    .sender(sender)
+                    .amount(sendMoneyWithAccNumberDTO.getAmount())
+                    .build();
+            transactionRepository.save(transaction);
+            accountRepository.save(senderAccount);
+            accountRepository.save(receiverAccount);
+            return transaction.toDto();
+        }
+
+
+    }
+
+    @Override
+    @Transactional
+    public TransferResponseDTO transferUsingUsername(String token, SendMoneyWithUsernameDTO sendMoneyWithUsernameDTO) throws InsufficientAmountException, UserNotFoundException {
+
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User sender = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
+        log.info(String.valueOf(sendMoneyWithUsernameDTO.getAmount()));
+        log.info(String.valueOf(sendMoneyWithUsernameDTO.getUsername()));
+        User receiver = userRepository.findUserByUsername("test").orElseThrow(() -> new UserNotFoundException("Could not find receiver account"));
+
+        Account senderAccount = sender.getAccount();
+        Account receiverAccount = receiver.getAccount();
+
+        if (senderAccount.getBalance() < sendMoneyWithUsernameDTO.getAmount()) {
+            throw new InsufficientAmountException("Insufficient funds");
+        }else {
+            senderAccount.setBalance(senderAccount.getBalance()-sendMoneyWithUsernameDTO.getAmount());
+            receiverAccount.setBalance(receiverAccount.getBalance()+sendMoneyWithUsernameDTO.getAmount());
+            Transaction transaction = Transaction.builder()
+                    .status(true)
+                    .receiver(receiver)
+                    .sender(sender)
+                    .amount(sendMoneyWithUsernameDTO.getAmount())
+                    .build();
+            transactionRepository.save(transaction);
+            accountRepository.save(senderAccount);
+            accountRepository.save(receiverAccount);
+            return transaction.toDto();
+        }
+
+    }
+
+    @Override
+    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException {
+        String email = jwtUtils.getUserNameFromJwtToken(token);
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
+
+        List<Transaction> lst = transactionRepository.findAllBySenderId(user.getId());
+        lst.addAll(transactionRepository.findAllByReceiverId(user.getId()));
+
+
+        return new AllTransactionsDTO(lst.stream().map(Transaction::toDto).collect(Collectors.toList()));
+    }
+}

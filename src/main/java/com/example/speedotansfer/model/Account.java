@@ -1,6 +1,7 @@
 package com.example.speedotansfer.model;
 
 
+import com.example.speedotansfer.dto.customerDTOs.AccountDTO;
 import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -34,5 +35,11 @@ public class Account {
     @OneToOne(mappedBy = "account")
     private User user;
 
-    // relation with account
+    public AccountDTO toDTO(){
+        return AccountDTO.builder()
+                .accountNumber(accountNumber)
+                .balance(balance)
+                .currency(currency)
+                .build();
+    }
 }

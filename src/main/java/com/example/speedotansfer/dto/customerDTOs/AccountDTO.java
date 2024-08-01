@@ -10,7 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AccountDTO {
-    private long id;
 
     private String accountNumber;
 
@@ -20,6 +19,5 @@ public class AccountDTO {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    private boolean active;
 
 }

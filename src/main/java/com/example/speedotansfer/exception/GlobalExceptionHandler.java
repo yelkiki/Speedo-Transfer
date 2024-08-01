@@ -100,7 +100,7 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(InsufficientAmountException.class)
     public ResponseEntity<Object> InsufficientAmountExceptionHandling(InsufficientAmountException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
-                request.getDescription(false), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+                request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
 

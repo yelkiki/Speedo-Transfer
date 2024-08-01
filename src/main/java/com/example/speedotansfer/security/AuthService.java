@@ -55,7 +55,7 @@ public class AuthService implements IAuth {
         // Create an account -> To be replaced
         Account account = Account.builder()
                 .currency(Currency.EGY)
-                .balance(0)
+                .balance(100)
                 .accountNumber(new SecureRandom().nextInt(1000000000) + "")
                 .build();
         accountRepository.save(account);

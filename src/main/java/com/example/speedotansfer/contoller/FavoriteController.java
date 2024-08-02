@@ -30,6 +30,11 @@ public class FavoriteController {
         return favouriteService.getAllFavourites(token);
     }
 
+    @GetMapping(params = { "page", "size" })
+    public List<Favourite> getFavorites(@RequestHeader("Authorization") String token, @RequestParam("page") int page, @RequestParam("size") int size) throws UserNotFoundException {
+        return favouriteService.getAllFavourites(token, page, size);
+    }
+
     @DeleteMapping("/{favouriteId}")
     public void removeFromFavorites(@PathVariable Long favouriteId, @RequestHeader("Authorization") String token) throws UserNotFoundException, AuthenticationException {
         favouriteService.removeFromFavourites(token, favouriteId);

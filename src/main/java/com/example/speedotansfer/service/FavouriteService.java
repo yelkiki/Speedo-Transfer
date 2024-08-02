@@ -15,7 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,6 +59,13 @@ public class FavouriteService implements IFavourite{
         User user = userRepository.findUserByEmail(jwtUtils.getUserNameFromJwtToken(token))
                 .orElseThrow(()-> new UserNotFoundException("User not found"));
         return favouriteRepository.getAllByUser(user);
+    }
+
+    public List<Favourite>getAllFavourites(String token, int page, int size) throws UserNotFoundException {
+        token = token.substring(7);
+        User user = userRepository.findUserByEmail(jwtUtils.getUserNameFromJwtToken(token))
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        return favouriteRepository.getAllByUser(user, PageRequest.of(page, size, Sort.by("addedAt").descending()));
     }
 
     @Override

@@ -23,6 +23,7 @@ public class UserService implements IUser {
     @Transactional
     public UserDTO updateCustomer(String token, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
 
+        token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
 
@@ -49,8 +50,9 @@ public class UserService implements IUser {
     @Override
 //    @Cacheable("customer")
     public UserDTO getCustomerById(String token) throws UserNotFoundException {
-        String email = jwtUtils.getUserEmailFromJwtToken(token);
-        User user = userRepository.findUserByEmail(email).orElseThrow(()-> new UserNotFoundException("User not found"));
+        token = token.substring(7);
+        long id = jwtUtils.getIdFromJwtToken(token);
+        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
 
         return user.toDTO();
     }

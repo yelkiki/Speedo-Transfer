@@ -30,9 +30,8 @@ public class FavouriteService implements IFavourite{
     public Favourite addToFavourites(String token, CreateFavouriteDTO createFavouriteDTO) throws UserNotFoundException {
 
         token = token.substring(7);
-        String email = jwtUtils.getUserEmailFromJwtToken(token);
-        User user = userRepository.findUserByEmail(email).
-                orElseThrow(()-> new UserNotFoundException("User not found"));
+        long id = jwtUtils.getIdFromJwtToken(token);
+        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
 
 
         User favUser = userRepository.getUserFromAccountNumber(createFavouriteDTO.getAccountNumber())
@@ -55,15 +54,15 @@ public class FavouriteService implements IFavourite{
     @Override
     public List<Favourite> getAllFavourites(String token) throws UserNotFoundException {
         token = token.substring(7);
-        User user = userRepository.findUserByEmail(jwtUtils.getUserEmailFromJwtToken(token))
-                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        long id = jwtUtils.getIdFromJwtToken(token);
+        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
         return favouriteRepository.getAllByUser(user);
     }
 
     public List<Favourite>getAllFavourites(String token, int page, int size) throws UserNotFoundException {
         token = token.substring(7);
-        User user = userRepository.findUserByEmail(jwtUtils.getUserEmailFromJwtToken(token))
-                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        long id = jwtUtils.getIdFromJwtToken(token);
+        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
         return favouriteRepository.getAllByUser(user, PageRequest.of(page, size, Sort.by("addedAt").descending()));
     }
 
@@ -71,8 +70,8 @@ public class FavouriteService implements IFavourite{
     public void removeFromFavourites(String token, Long favouriteId) throws UserNotFoundException, AuthenticationException {
         // Make sure the token user is same as the user who owns the relationship of favourite
         token = token.substring(7);
-        User user = userRepository.findUserByEmail(jwtUtils.getUserEmailFromJwtToken(token))
-                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        long id = jwtUtils.getIdFromJwtToken(token);
+        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
         Favourite favourite = favouriteRepository.findById(favouriteId)
                 .orElseThrow(()-> new DataIntegrityViolationException("Favourite does not exist"));
         if(favourite.getUser().getExternalId().equals(user.getExternalId())){

@@ -19,13 +19,11 @@ public class UserController {
 
     @GetMapping("/details")
     public UserDTO getUserById(@RequestHeader("Authorization") String token) throws UserNotFoundException {
-        String trimmedToken = token.substring(7).trim();
-        return userService.getCustomerById(trimmedToken);
+        return userService.getCustomerById(token);
     }
 
     @PutMapping("/update")
     public UserDTO updateUser(@RequestHeader("Authorization") String token,@RequestBody UpdateUserDTO userDTO) throws UserNotFoundException {
-        String trimmedToken = token.substring(7).trim();
-        return userService.updateCustomer(trimmedToken,userDTO);
+        return userService.updateCustomer(token,userDTO);
     }
 }

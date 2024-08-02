@@ -22,31 +22,27 @@ public class TransactionController {
 
     @GetMapping("/balance")
     public AccountDTO getBalance(@RequestHeader("Authorization") String token) throws UserNotFoundException {
-        String trimmedToken = token.substring(7).trim();
-        return transactionService.getBalance(trimmedToken);
+        return transactionService.getBalance(token);
     }
 
 
 
     @GetMapping
     public AllTransactionsDTO getTransactions(@RequestHeader("Authorization") String token) throws UserNotFoundException {
-        String trimmedToken = token.substring(7).trim();
-        return transactionService.getHistory(trimmedToken);
+        return transactionService.getHistory(token);
     }
 
     @PostMapping("/account")
     public TransferResponseDTO transferUsingAccountNumber(@RequestHeader("Authorization") String token,@RequestBody @Valid SendMoneyWithAccNumberDTO details) throws UserNotFoundException, InsufficientAmountException {
-        String trimmedToken = token.substring(7).trim();
-        return transactionService.transferUsingAccNumber(trimmedToken,details);
+        return transactionService.transferUsingAccNumber(token,details);
 
     }
 
-    @PostMapping("/username")
-    public TransferResponseDTO transferUsingUsername(@RequestHeader("Authorization") String token, @RequestBody @Valid SendMoneyWithUsernameDTO details) throws UserNotFoundException, InsufficientAmountException {
-        String trimmedToken = token.substring(7).trim();
-        return transactionService.transferUsingUsername(trimmedToken,details);
-
-    }
+//    @PostMapping("/username")
+//    public TransferResponseDTO transferUsingUsername(@RequestHeader("Authorization") String token, @RequestBody @Valid SendMoneyWithUsernameDTO details) throws UserNotFoundException, InsufficientAmountException {
+//        return transactionService.transferUsingUsername(token,details);
+//
+//    }
 
 
 }

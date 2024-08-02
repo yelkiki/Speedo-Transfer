@@ -1,6 +1,7 @@
 package com.example.speedotansfer.model;
 
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
+import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,10 @@ public class Transaction {
 
     @Column(nullable = false)
     private double amount;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
 
     @Column(nullable = false)

@@ -5,7 +5,10 @@ import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithUsernameDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
+import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
+import com.example.speedotansfer.exception.custom.AccountNotFoundException;
 import com.example.speedotansfer.exception.custom.InsufficientAmountException;
+import com.example.speedotansfer.exception.custom.InvalidTransferException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.service.TransactionService;
 import jakarta.validation.Valid;
@@ -21,7 +24,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @GetMapping("/balance")
-    public AccountDTO getBalance(@RequestHeader("Authorization") String token) throws UserNotFoundException {
+    public BalanceDTO getBalance(@RequestHeader("Authorization") String token) throws UserNotFoundException {
         return transactionService.getBalance(token);
     }
 
@@ -33,7 +36,7 @@ public class TransactionController {
     }
 
     @PostMapping("/account")
-    public TransferResponseDTO transferUsingAccountNumber(@RequestHeader("Authorization") String token,@RequestBody @Valid SendMoneyWithAccNumberDTO details) throws UserNotFoundException, InsufficientAmountException {
+    public TransferResponseDTO transferUsingAccountNumber(@RequestHeader("Authorization") String token,@RequestBody @Valid SendMoneyWithAccNumberDTO details) throws UserNotFoundException, InsufficientAmountException, InvalidTransferException, AccountNotFoundException {
         return transactionService.transferUsingAccNumber(token,details);
 
     }

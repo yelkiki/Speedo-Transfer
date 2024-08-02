@@ -65,8 +65,8 @@ public class User {
     @UpdateTimestamp
     private final LocalDateTime updatedAt = LocalDateTime.now();
 
-    @OneToOne(mappedBy = "user")
-    private Account account;
+    @OneToMany(mappedBy = "user")
+    private List<Account> account;
 
 
     @OneToMany(mappedBy = "sender")

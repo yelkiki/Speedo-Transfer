@@ -4,10 +4,13 @@ package com.example.speedotansfer.model;
 import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Data
 @Entity
@@ -30,14 +33,33 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private Currency currency = Currency.EGY;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
     private User user;
+
+    @Column(unique = true, nullable = false)
+    private String cardNumber;
+
+    @Column(nullable = false)
+    private String cardholderName;
+
+    @Column(nullable = false)
+    private int cvv;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "(0[1-9]|1[0-2])/\\d{2}", message = "Expiration date must be in MM/YY format")
+    private String expirationDate;
 
     public AccountDTO toDTO(){
         return AccountDTO.builder()
                 .accountNumber(accountNumber)
                 .balance(balance)
                 .currency(currency)
+                .userId(user.getInternalId())
+                .cardNumber(cardNumber)
+                .cardholderName(cardholderName)
+                .cvv(cvv)
+                .expirationDate(expirationDate)
                 .build();
     }
 }

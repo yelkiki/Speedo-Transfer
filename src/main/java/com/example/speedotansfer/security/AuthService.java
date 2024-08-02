@@ -66,17 +66,16 @@ public class AuthService implements IAuth {
 
         userRepository.save(user);
 
-        Account account = Account.builder()
-                .currency(Currency.EGY)
-                .balance(100)
-                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
-                .build();
+//        Account account = Account.builder()
+//                .currency(Currency.EGY)
+//                .balance(100)
+//                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
+//                .build();
+//
+//        account.setUser(user);
+//
+//        accountRepository.save(account);
 
-        account.setUser(user);
-
-        accountRepository.save(account);
-
-        System.out.println(account);
 
         return user.toDTO();
     }

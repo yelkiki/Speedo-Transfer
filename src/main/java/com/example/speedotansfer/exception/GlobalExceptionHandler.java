@@ -1,8 +1,6 @@
 package com.example.speedotansfer.exception;
 
-import com.example.speedotansfer.exception.custom.InsufficientAmountException;
-import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
-import com.example.speedotansfer.exception.custom.UserNotFoundException;
+import com.example.speedotansfer.exception.custom.*;
 import com.example.speedotansfer.exception.response.ErrorDetails;
 import com.example.speedotansfer.exception.response.ValidationFailedResponse;
 import com.example.speedotansfer.exception.response.ViolationErrors;
@@ -106,6 +104,18 @@ public class GlobalExceptionHandler{
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> dataIntegrityViolationExceptionHandling(DataIntegrityViolationException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<Object> accountNotFoundExceptionHandler(AccountNotFoundException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidTransferException.class)
+    public ResponseEntity<Object> invalidTransferExceptionHandler(InvalidTransferException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
                 request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }

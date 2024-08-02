@@ -53,9 +53,8 @@ public class AuthService implements IAuth {
             throw new UserNotFoundException("Customer Password Not Matched");
 
         User user = User.builder().
-                id(UUID.randomUUID()).
-                firstName(registerDTO.getFirstName()).
-                lastname(registerDTO.getLastName()).
+                externalId(UUID.randomUUID()).
+                fullName(registerDTO.getFullName()).
                 username(registerDTO.getUsername()).
                 password(encoder.encode(registerDTO.getPassword())).
                 email(registerDTO.getEmail()).

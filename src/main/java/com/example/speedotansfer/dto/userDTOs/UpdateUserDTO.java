@@ -6,8 +6,7 @@ import lombok.Data;
 @Data
 public class UpdateUserDTO {
     private final String username;
-    private final String firstName;
-    private final String lastName;
+    private final String fullName;
     private final String email;
     private final String phoneNumber;
 }

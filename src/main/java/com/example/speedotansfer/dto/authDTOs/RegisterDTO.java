@@ -15,9 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class RegisterDTO {
     @NotNull
-    private String firstName;
-    @NotNull
-    private String lastName;
+    private String fullName;
     @NotNull
     private String email;
     @NotNull

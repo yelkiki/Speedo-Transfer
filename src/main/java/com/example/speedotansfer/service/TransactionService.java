@@ -36,7 +36,7 @@ public class TransactionService implements ITransaction{
 
     @Override
     public AccountDTO getBalance(String token) throws UserNotFoundException {
-        String email = jwtUtils.getUserNameFromJwtToken(token);
+        String email = jwtUtils.getUserEmailFromJwtToken(token);
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
 
         return user.getAccount().toDTO();
@@ -46,7 +46,7 @@ public class TransactionService implements ITransaction{
     @Override
     @Transactional
     public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException {
-        String email = jwtUtils.getUserNameFromJwtToken(token);
+        String email = jwtUtils.getUserEmailFromJwtToken(token);
         User sender = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
 
         Account receiverAccount = accountRepository.findAccountByAccountNumber(sendMoneyWithAccNumberDTO.getAccountNumber()).orElseThrow(() -> new UserNotFoundException("Could not find receiver's account 1"));
@@ -78,7 +78,7 @@ public class TransactionService implements ITransaction{
     @Transactional
     public TransferResponseDTO transferUsingUsername(String token, SendMoneyWithUsernameDTO sendMoneyWithUsernameDTO) throws InsufficientAmountException, UserNotFoundException {
 
-        String email = jwtUtils.getUserNameFromJwtToken(token);
+        String email = jwtUtils.getUserEmailFromJwtToken(token);
         User sender = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
         log.info(String.valueOf(sendMoneyWithUsernameDTO.getAmount()));
         log.info(String.valueOf(sendMoneyWithUsernameDTO.getUsername()));
@@ -108,11 +108,11 @@ public class TransactionService implements ITransaction{
 
     @Override
     public AllTransactionsDTO getHistory(String token) throws UserNotFoundException {
-        String email = jwtUtils.getUserNameFromJwtToken(token);
+        String email = jwtUtils.getUserEmailFromJwtToken(token);
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("Could not find your account"));
 
-        List<Transaction> lst = transactionRepository.findAllBySenderId(user.getId());
-        lst.addAll(transactionRepository.findAllByReceiverId(user.getId()));
+        List<Transaction> lst = transactionRepository.findAllBySenderInternalId(user.getInternalId());
+        lst.addAll(transactionRepository.findAllByReceiverInternalId(user.getInternalId()));
 
 
         return new AllTransactionsDTO(lst.stream().map(Transaction::toDto).collect(Collectors.toList()));

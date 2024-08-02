@@ -3,11 +3,13 @@ package com.example.speedotansfer.security;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 
 @Builder
@@ -16,7 +18,7 @@ import java.util.Collections;
 public class UserDetailsImpl implements UserDetails{
     private String email;
     private String password;
-
+    private Long id;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

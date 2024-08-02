@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -26,8 +27,11 @@ public class JwtUtils {
         // Get Current Authenticated User
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
+        System.out.println(UserDetailsImpl.builder().email(userPrincipal.getUsername()).password(userPrincipal.getPassword()).id(userPrincipal.getId()).build());
+
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
+                .setId(userPrincipal.getId().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -38,11 +42,15 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getUserEmailFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
+    public Long getIdFromJwtToken(String token) {
+        return Long.parseLong(Jwts.parserBuilder().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getId());
+    }
 
     public boolean validateJwtToken(String authToken) {
         try {

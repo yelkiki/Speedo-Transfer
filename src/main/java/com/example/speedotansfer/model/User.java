@@ -24,19 +24,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    // 5aleeha rakam w auto increment (same LENGTH)
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private long internalId;
-
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long internalId;
 
     @Column(nullable = false)
-    private String firstName;
+    private UUID externalId;
 
     @Column(nullable = false)
-    private String lastname;
+    private String fullName;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -86,9 +82,8 @@ public class User {
 
     public UserDTO toDTO() {
         return UserDTO.builder()
-                .customerId(id)
-                .firstName(firstName)
-                .lastName(lastname)
+                .userId(externalId)
+                .fullName(fullName)
                 .username(username)
                 .email(email)
                 .gender(gender)

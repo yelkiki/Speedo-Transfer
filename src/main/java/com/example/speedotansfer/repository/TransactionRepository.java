@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findAllBySenderId(UUID id);
-    List<Transaction> findAllByReceiverId(UUID id);
+    List<Transaction> findAllBySenderInternalId(Long id);
+    List<Transaction> findAllByReceiverInternalId(Long id);
 }

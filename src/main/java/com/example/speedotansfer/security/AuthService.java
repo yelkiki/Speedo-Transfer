@@ -6,6 +6,7 @@ import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.enums.Currency;
+import com.example.speedotansfer.exception.custom.PasswordNotMatchException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
@@ -39,18 +40,18 @@ public class AuthService implements IAuth {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public UserDTO register(RegisterDTO registerDTO) throws UserAlreadyExistsException, UserNotFoundException {
+    public UserDTO register(RegisterDTO registerDTO) throws UserAlreadyExistsException, PasswordNotMatchException {
         if (userRepository.existsByEmail(registerDTO.getEmail()))
-            throw new UserNotFoundException("Customer Email Already Exists");
+            throw new UserAlreadyExistsException("Customer Email Already Exists");
 
         if (userRepository.existsByUsername(registerDTO.getUsername()))
-            throw new UserNotFoundException("Customer Username Already Exists");
+            throw new UserAlreadyExistsException("Customer Username Already Exists");
 
         if (userRepository.existsByPhoneNumber(registerDTO.getPhoneNumber()))
-            throw new UserNotFoundException("Customer Phone Number Already Exists");
+            throw new UserAlreadyExistsException("Customer Phone Number Already Exists");
 
         if (!Objects.equals(registerDTO.getPassword(), registerDTO.getConfirmPassword()))
-            throw new UserNotFoundException("Customer Password Not Matched");
+            throw new PasswordNotMatchException("Customer Password Not Matched");
 
         User user = User.builder().
                 externalId(UUID.randomUUID()).

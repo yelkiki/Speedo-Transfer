@@ -5,7 +5,9 @@ import com.example.speedotansfer.enums.Country;
 import com.example.speedotansfer.enums.Gender;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,8 +19,10 @@ public class RegisterDTO {
     @NotNull
     private String fullName;
     @NotNull
+    @Email
     private String email;
     @NotNull
+    @Pattern(regexp = "^(\\+201|01|00201)[0-2,5][0-9]{8}")
     private String phoneNumber;
     @NotNull
     private String username;

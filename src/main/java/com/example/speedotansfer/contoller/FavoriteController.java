@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
+import java.util.List;
+
 @RestController
 @RequestMapping("api/favorites")
 @RequiredArgsConstructor
@@ -20,5 +23,15 @@ public class FavoriteController {
     @PostMapping
     public Favourite addToFavorite(@RequestBody @Valid CreateFavouriteDTO createFavouriteDTO, @RequestHeader("Authorization") String token) throws UserNotFoundException {
         return favouriteService.addToFavourites(token, createFavouriteDTO);
+    }
+
+    @GetMapping
+    public List<Favourite> getFavorites(@RequestHeader("Authorization") String token) throws UserNotFoundException {
+        return favouriteService.getAllFavourites(token);
+    }
+
+    @DeleteMapping("/{favouriteId}")
+    public void removeFromFavorites(@PathVariable Long favouriteId, @RequestHeader("Authorization") String token) throws UserNotFoundException, AuthenticationException {
+        favouriteService.removeFromFavourites(token, favouriteId);
     }
 }

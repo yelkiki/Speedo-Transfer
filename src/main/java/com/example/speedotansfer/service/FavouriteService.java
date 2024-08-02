@@ -9,8 +9,13 @@ import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,13 +54,29 @@ public class FavouriteService implements IFavourite{
     }
 
     @Override
-    public List<Favourite> getAllFavourites(String token) {
-        return null;
+    public List<Favourite> getAllFavourites(String token) throws UserNotFoundException {
+        token = token.substring(7);
+        User user = userRepository.findUserByEmail(jwtUtils.getUserNameFromJwtToken(token))
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        return favouriteRepository.getAllByUser(user);
     }
 
     @Override
-    public void removeFromFavourites(String token, CreateFavouriteDTO createFavouriteDTO) {
-
+    public void removeFromFavourites(String token, Long favouriteId) throws UserNotFoundException, AuthenticationException {
+        // Make sure the token user is same as the user who owns the relationship of favourite
+        token = token.substring(7);
+        User user = userRepository.findUserByEmail(jwtUtils.getUserNameFromJwtToken(token))
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        Favourite favourite = favouriteRepository.findById(favouriteId)
+                .orElseThrow(()-> new DataIntegrityViolationException("Favourite does not exist"));
+        if(favourite.getUser().getId().equals(user.getId())){
+            favouriteRepository.delete(favourite);
+        }
+        else{
+            throw new AuthenticationException("You are not authorized to delete this favourite");
+        }
     }
+
+
 
 }

@@ -89,12 +89,13 @@ public class GlobalExceptionHandler{
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> authenticationExceptionHandling(AuthenticationException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now()
                 , String.format("Incorrect email or password credentials provided. [ %s ]", exception.getMessage()),
                 request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
     }
+
 
     @ExceptionHandler(InsufficientAmountException.class)
     public ResponseEntity<Object> InsufficientAmountExceptionHandling(InsufficientAmountException exception, WebRequest request) {

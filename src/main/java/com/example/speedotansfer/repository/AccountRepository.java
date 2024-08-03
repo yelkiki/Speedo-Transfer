@@ -1,5 +1,6 @@
 package com.example.speedotansfer.repository;
 
+import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query(value = "SELECT * FROM accounts WHERE user_id = ?1", nativeQuery = true)
     List<Account> findAllByUserid(long userid);
+
+    @Query(value = "SELECT * FROM accounts as acc JOIN users as u ON u.internal_id = acc.user_id\n" +
+            "WHERE acc.card_number = ?1 OR acc.currency = ?1", nativeQuery = true)
+    Optional<Account> findAccountByUserIdSameCurrencyOrCardNumber(String cardNumber, Currency currency);
 }

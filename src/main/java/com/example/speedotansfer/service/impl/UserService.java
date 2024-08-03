@@ -4,6 +4,7 @@ package com.example.speedotansfer.service.impl;
 import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
+import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
@@ -33,7 +34,7 @@ public class UserService implements IUser {
 
     @Override
     @Transactional
-    public UserDTO updateCustomer(String token, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException {
+    public UserDTO updateUser(String token, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException, InvalidJwtTokenException {
 
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
@@ -45,8 +46,6 @@ public class UserService implements IUser {
         if (updateCustomerDTO.getFullName() != null) {
             user.setFullName(updateCustomerDTO.getFullName());
         }
-
-
         if (updateCustomerDTO.getUsername() != null) {
             user.setUsername(updateCustomerDTO.getUsername());
         }
@@ -63,18 +62,17 @@ public class UserService implements IUser {
 
     @Override
 //    @Cacheable("customer")
-    public UserDTO getCustomerById(String token) throws UserNotFoundException {
+    public UserDTO getUserById(String token) throws UserNotFoundException, InvalidJwtTokenException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
-
         return user.toDTO();
     }
 
 
 
     @Override
-    public List<AccountDTO> getAccounts(String token) throws UserNotFoundException {
+    public List<AccountDTO> getAccounts(String token) throws UserNotFoundException, InvalidJwtTokenException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         accountRepository.findAllByUserid(id);

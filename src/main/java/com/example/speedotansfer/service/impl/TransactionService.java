@@ -4,10 +4,7 @@ import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
-import com.example.speedotansfer.exception.custom.AccountNotFoundException;
-import com.example.speedotansfer.exception.custom.InsufficientAmountException;
-import com.example.speedotansfer.exception.custom.InvalidTransferException;
-import com.example.speedotansfer.exception.custom.UserNotFoundException;
+import com.example.speedotansfer.exception.custom.*;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.Transaction;
 import com.example.speedotansfer.model.User;
@@ -38,7 +35,7 @@ public class TransactionService implements ITransaction {
 
 
     @Override
-    public BalanceDTO getBalance(String token) throws UserNotFoundException {
+    public BalanceDTO getBalance(String token) throws UserNotFoundException, InvalidJwtTokenException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -64,7 +61,7 @@ public class TransactionService implements ITransaction {
 
     @Override
     @Transactional
-    public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, InvalidTransferException {
+    public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, InvalidTransferException, InvalidJwtTokenException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User sender = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -145,7 +142,7 @@ public class TransactionService implements ITransaction {
 //    }
 
     @Override
-    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException {
+    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException, InvalidJwtTokenException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));

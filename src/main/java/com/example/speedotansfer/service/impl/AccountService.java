@@ -1,6 +1,8 @@
 package com.example.speedotansfer.service.impl;
 
 import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.exception.custom.AccountAlreadyExists;
+import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
@@ -26,14 +28,18 @@ public class AccountService implements IAccount {
 
 
     @Override
-    public AccountDTO addAccount(String token, AccountDTO acc) throws UserNotFoundException {
+    public AccountDTO addAccount(String token, AccountDTO acc)
+            throws AccountAlreadyExists ,UserNotFoundException, InvalidJwtTokenException {
 
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Optional<Account> res = accountRepository.findAccountByCurrencyAndUserid(acc.getCurrency().toString(), id);
-        if (res.isPresent()) {
-            throw new UserNotFoundException("You Already have an account with this Currency");
+
+        Optional<Account> res = accountRepository.
+                findAccountByUserIdSameCurrencyOrCardNumber( acc.getCardNumber(),acc.getCurrency());
+
+        if(res.isPresent()){
+            throw new AccountAlreadyExists("You Already Have a card with same number or currency");
         }
 
         Account account = Account.builder()
@@ -48,7 +54,6 @@ public class AccountService implements IAccount {
                 .build();
 
         accountRepository.save(account);
-
 
         return account.toDTO();
     }

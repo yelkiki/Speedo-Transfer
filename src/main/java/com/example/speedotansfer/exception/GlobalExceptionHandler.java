@@ -133,5 +133,11 @@ public class GlobalExceptionHandler {
                 request.getDescription(false), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AccountAlreadyExists.class)
+    public ResponseEntity<Object> accountAlreadyExistsHandler(AccountAlreadyExists exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
 }
 

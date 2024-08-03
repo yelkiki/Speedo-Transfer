@@ -18,36 +18,28 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
+    @CreationTimestamp
+    private final LocalDateTime timeStamp = LocalDateTime.now();
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Column(nullable = false)
     private double amount;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Currency currency;
-
-
     @Column(nullable = false)
     private boolean status;
-
-    @CreationTimestamp
-    private final LocalDateTime timeStamp = LocalDateTime.now();
-
-
-
     @ManyToOne
-    @JoinColumn(name="sender_id", nullable=false)
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name="receiver_id", nullable=false)
+    @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
 
-    public TransferResponseDTO toDto(){
+    public TransferResponseDTO toDto() {
         return TransferResponseDTO.builder()
                 .transactionId(this.id)
                 .fromAccount(this.sender.getUsername())

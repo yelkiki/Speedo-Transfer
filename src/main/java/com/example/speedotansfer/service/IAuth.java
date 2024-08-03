@@ -1,4 +1,4 @@
-package com.example.speedotansfer.security;
+package com.example.speedotansfer.service;
 
 
 import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -26,8 +25,6 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
         // Get Current Authenticated User
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
-        System.out.println(UserDetailsImpl.builder().email(userPrincipal.getUsername()).password(userPrincipal.getPassword()).id(userPrincipal.getId()).build());
 
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))

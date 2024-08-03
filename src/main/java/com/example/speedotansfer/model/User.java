@@ -24,47 +24,35 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    @CreationTimestamp
+    private final LocalDateTime creationTimeStamp = LocalDateTime.now();
+    @UpdateTimestamp
+    private final LocalDateTime updatedAt = LocalDateTime.now();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long internalId;
-
     @Column(nullable = false)
     private UUID externalId;
-
     @Column(nullable = false)
     private String fullName;
-
     @Column(unique = true, nullable = false)
     private String username;
-
     @Column(nullable = false)
     private String password;
-
     @Column(unique = true, nullable = false)
     @Email
     private String email;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     @Pattern(regexp = "^(\\+201|01|00201)[0-2,5][0-9]{8}")
     private String phoneNumber;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Country country;
-
     @Column(nullable = false)
     private LocalDate birthdate;
-
-    @CreationTimestamp
-    private final LocalDateTime creationTimeStamp = LocalDateTime.now();
-
-    @UpdateTimestamp
-    private final LocalDateTime updatedAt = LocalDateTime.now();
-
     @OneToMany(mappedBy = "user")
     private List<Account> account;
 
@@ -77,6 +65,9 @@ public class User {
 
     @OneToMany(mappedBy = "favouriteUser")
     private List<Favourite> fav;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
     // momken add role for extra bonus
 

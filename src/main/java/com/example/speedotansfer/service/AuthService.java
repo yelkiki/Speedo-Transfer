@@ -1,4 +1,4 @@
-package com.example.speedotansfer.security;
+package com.example.speedotansfer.service;
 
 
 import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
@@ -10,6 +10,8 @@ import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.UserRepository;
+import com.example.speedotansfer.security.JwtUtils;
+import com.example.speedotansfer.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;

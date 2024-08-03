@@ -5,7 +5,7 @@ import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
-import com.example.speedotansfer.security.AuthService;
+import com.example.speedotansfer.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 
 
 @ControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<Object> customerAlreadyExistExceptionHandling(UserAlreadyExistsException exception, WebRequest request) {
@@ -119,6 +119,12 @@ public class GlobalExceptionHandler{
     public ResponseEntity<Object> invalidTransferExceptionHandler(InvalidTransferException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
                 request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidJwtTokenException.class)
+    public ResponseEntity<Object> invalidJwtTokenExceptionHandler(InvalidJwtTokenException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
     }
 
 }

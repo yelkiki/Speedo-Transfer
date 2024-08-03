@@ -1,12 +1,9 @@
-package com.example.speedotansfer.service;
+package com.example.speedotansfer.service.impl;
 
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
-import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithUsernameDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
-import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
 import com.example.speedotansfer.exception.custom.InsufficientAmountException;
 import com.example.speedotansfer.exception.custom.InvalidTransferException;
@@ -18,6 +15,7 @@ import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.TransactionRepository;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
+import com.example.speedotansfer.service.ITransaction;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,12 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionService implements ITransaction{
+public class TransactionService implements ITransaction {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
     private final TransactionRepository transactionRepository;
@@ -44,7 +41,7 @@ public class TransactionService implements ITransaction{
     public BalanceDTO getBalance(String token) throws UserNotFoundException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
+        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Account> accounts = accountRepository.findAllByUserid(id);
         double balance = accounts.stream()
@@ -61,7 +58,6 @@ public class TransactionService implements ITransaction{
                 .sum();
 
 
-
         return new BalanceDTO(balance);
     }
 
@@ -71,10 +67,10 @@ public class TransactionService implements ITransaction{
     public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, InvalidTransferException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
-        User sender = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
+        User sender = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Account receiverAccount = accountRepository.findAccountByAccountNumber(sendMoneyWithAccNumberDTO.getAccountNumber()).orElseThrow(() -> new UserNotFoundException("Could not find receiver's account 1"));
-        Account senderAccount = accountRepository.findAccountByCurrencyAndUserid(sendMoneyWithAccNumberDTO.getSendCurrency().toString(),id).orElseThrow(() -> new AccountNotFoundException("You Don't have an account with this Currency"));
+        Account senderAccount = accountRepository.findAccountByCurrencyAndUserid(sendMoneyWithAccNumberDTO.getSendCurrency().toString(), id).orElseThrow(() -> new AccountNotFoundException("You Don't have an account with this Currency"));
 
         User receiver = userRepository.findUserByAccount(receiverAccount).orElseThrow(() -> new UserNotFoundException("Could not find receiver's account 2"));
 
@@ -99,8 +95,8 @@ public class TransactionService implements ITransaction{
             transactionRepository.save(transaction);
             throw new InvalidTransferException("Cannot Transfer to different Currencies");
         } else {
-            senderAccount.setBalance(senderAccount.getBalance()-sendMoneyWithAccNumberDTO.getAmount());
-            receiverAccount.setBalance(receiverAccount.getBalance()+sendMoneyWithAccNumberDTO.getAmount());
+            senderAccount.setBalance(senderAccount.getBalance() - sendMoneyWithAccNumberDTO.getAmount());
+            receiverAccount.setBalance(receiverAccount.getBalance() + sendMoneyWithAccNumberDTO.getAmount());
             Transaction transaction = Transaction.builder()
                     .status(true)
                     .receiver(receiver)
@@ -152,7 +148,7 @@ public class TransactionService implements ITransaction{
     public AllTransactionsDTO getHistory(String token) throws UserNotFoundException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
+        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Transaction> lst = transactionRepository.findAllBySenderInternalId(user.getInternalId());
         lst.addAll(transactionRepository.findAllByReceiverInternalId(user.getInternalId()));

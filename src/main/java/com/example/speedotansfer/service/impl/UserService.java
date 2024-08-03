@@ -1,16 +1,16 @@
-package com.example.speedotansfer.service;
+package com.example.speedotansfer.service.impl;
 
 
 import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
-import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
+import com.example.speedotansfer.service.IUser;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class UserService implements IUser {
 
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
+        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (updateCustomerDTO.getEmail() != null) {
             user.setEmail(updateCustomerDTO.getEmail());
@@ -48,12 +48,14 @@ public class UserService implements IUser {
         }
 
 
-        if (updateCustomerDTO.getUsername() != null){
+        if (updateCustomerDTO.getUsername() != null) {
             user.setUsername(updateCustomerDTO.getUsername());
         }
-        if (updateCustomerDTO.getPhoneNumber() != null){
+        if (updateCustomerDTO.getPhoneNumber() != null) {
             user.setPhoneNumber(updateCustomerDTO.getPhoneNumber());
         }
+
+        userRepository.save(user);
 
         return user.toDTO();
 
@@ -65,7 +67,7 @@ public class UserService implements IUser {
     public UserDTO getCustomerById(String token) throws UserNotFoundException {
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
+        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return user.toDTO();
     }
@@ -75,9 +77,9 @@ public class UserService implements IUser {
 
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(()-> new UserNotFoundException("User not found"));
-        Optional<Account> res = accountRepository.findAccountByCurrencyAndUserid(acc.getCurrency().toString(),id);
-        if(res.isPresent()){
+        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        Optional<Account> res = accountRepository.findAccountByCurrencyAndUserid(acc.getCurrency().toString(), id);
+        if (res.isPresent()) {
             throw new UserNotFoundException("You Already have an account with this Currency");
         }
 

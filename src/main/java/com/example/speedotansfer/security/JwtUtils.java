@@ -1,9 +1,13 @@
 package com.example.speedotansfer.security;
 
+import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
+import com.example.speedotansfer.model.Token;
+import com.example.speedotansfer.repository.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -14,11 +18,13 @@ import java.util.Date;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
+
 public class JwtUtils {
 
+    private final TokenRepository tokenRepository;
     @Value("${app.jwt.secret}")
     private String jwtSecret;
-
     @Value("${app.jwt.expiration.ms}")
     private int jwtExpirationMs;
 
@@ -51,9 +57,13 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
+            Token token = tokenRepository.findByToken(authToken).
+                    orElseThrow(() -> new InvalidJwtTokenException("Invalid Token"));
+            if (token.isRevoked())
+                throw new InvalidJwtTokenException("Token is revoked");
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
             return true;
-        } catch (MalformedJwtException e) {
+        } catch (MalformedJwtException | InvalidJwtTokenException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
             log.error("JWT token is expired: {}", e.getMessage());

@@ -1,17 +1,20 @@
-package com.example.speedotansfer.service;
+package com.example.speedotansfer.service.impl;
 
 
 import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
+import com.example.speedotansfer.enums.TokenType;
 import com.example.speedotansfer.exception.custom.PasswordNotMatchException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
+import com.example.speedotansfer.model.Token;
 import com.example.speedotansfer.model.User;
-import com.example.speedotansfer.repository.AccountRepository;
+import com.example.speedotansfer.repository.TokenRepository;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.security.UserDetailsImpl;
+import com.example.speedotansfer.service.IAuth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +38,7 @@ public class AuthService implements IAuth {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final AccountRepository accountRepository;
+    private final TokenRepository tokenRepository;
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -96,14 +99,29 @@ public class AuthService implements IAuth {
 
         String jwt = jwtUtils.generateJwtToken(authentication);
         // Get Current Authenticated User
-        UserDetailsImpl customerDetails = (UserDetailsImpl) authentication.getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User user = userRepository.findUserByInternalId(userDetails.getId()).
+                orElseThrow();
+
+        Token token = Token.builder()
+                .token(jwt)
+                .tokenType(TokenType.BEARER)
+                .revoked(false)
+                .user(user)
+                .build();
+
+        tokenRepository.save(token);
 
         return LoginResponseDTO.builder()
                 .token(jwt)
-                .email(customerDetails.getEmail())
+                .email(userDetails.getEmail())
                 .tokenType("Bearer")
                 .massage("Login Successful")
                 .status(HttpStatus.ACCEPTED)
                 .build();
     }
+    
 }
+
+

@@ -1,9 +1,8 @@
 package com.example.speedotansfer.config;
 
-import com.example.speedotansfer.security.UserDetailsServiceImpl;
-
 import com.example.speedotansfer.security.AuthEntryPointJwt;
 import com.example.speedotansfer.security.AuthTokenFilter;
+import com.example.speedotansfer.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +13,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class WebSecurityConfig {
 
     private final UserDetailsServiceImpl customerDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
+    private final LogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,9 +36,15 @@ public class WebSecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("swagger-ui.html",
-                                "/api/auth/**", "/swagger-ui/**","/h2-console/**",
+                                "/api/auth/**", "/swagger-ui/**", "/h2-console/**",
                                 "/v3/api-docs/**", "/swagger-resources/**").
-                        permitAll().anyRequest().authenticated());
+                        permitAll().anyRequest().authenticated())
+                .logout(logout -> logout.logoutUrl("/api/auth/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler(
+                                (request, response, authentication) -> SecurityContextHolder.clearContext())
+                );
+
         http.authenticationProvider(authenticationProvider());
         // To Run H2-Console
         http.headers().frameOptions().disable();

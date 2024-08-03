@@ -1,16 +1,14 @@
 package com.example.speedotansfer.contoller;
 
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
-import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithUsernameDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
 import com.example.speedotansfer.exception.custom.InsufficientAmountException;
 import com.example.speedotansfer.exception.custom.InvalidTransferException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
-import com.example.speedotansfer.service.TransactionService;
+import com.example.speedotansfer.service.impl.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -29,15 +27,14 @@ public class TransactionController {
     }
 
 
-
     @GetMapping
     public AllTransactionsDTO getTransactions(@RequestHeader("Authorization") String token) throws UserNotFoundException {
         return transactionService.getHistory(token);
     }
 
     @PostMapping("/account")
-    public TransferResponseDTO transferUsingAccountNumber(@RequestHeader("Authorization") String token,@RequestBody @Valid SendMoneyWithAccNumberDTO details) throws UserNotFoundException, InsufficientAmountException, InvalidTransferException, AccountNotFoundException {
-        return transactionService.transferUsingAccNumber(token,details);
+    public TransferResponseDTO transferUsingAccountNumber(@RequestHeader("Authorization") String token, @RequestBody @Valid SendMoneyWithAccNumberDTO details) throws UserNotFoundException, InsufficientAmountException, InvalidTransferException, AccountNotFoundException {
+        return transactionService.transferUsingAccNumber(token, details);
 
     }
 

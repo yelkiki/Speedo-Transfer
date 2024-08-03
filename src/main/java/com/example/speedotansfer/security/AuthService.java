@@ -5,11 +5,8 @@ import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
-import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.PasswordNotMatchException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
-import com.example.speedotansfer.exception.custom.UserNotFoundException;
-import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.UserRepository;
@@ -18,13 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -82,9 +79,16 @@ public class AuthService implements IAuth {
     }
 
     @Override
-    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UserNotFoundException {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws AuthenticationException {
+        // Want to write our authentication logic
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+        } catch (AuthenticationException e) {
+            throw new AuthenticationException("Incorrect email or password credentials provided") {
+            };
+        }
         // Authenticate the user across the spring security
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

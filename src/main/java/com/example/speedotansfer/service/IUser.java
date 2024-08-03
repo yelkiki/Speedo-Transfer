@@ -13,8 +13,6 @@ public interface IUser {
 
     public UserDTO getCustomerById(String token) throws UserNotFoundException;
 
-    public AccountDTO addAccount(String token, AccountDTO acc) throws UserNotFoundException;
-
     public List<AccountDTO> getAccounts(String token) throws UserNotFoundException;
 
 }

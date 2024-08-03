@@ -1,6 +1,5 @@
 package com.example.speedotansfer.repository;
 
-import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

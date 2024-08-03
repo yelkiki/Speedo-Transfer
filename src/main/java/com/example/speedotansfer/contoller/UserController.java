@@ -30,10 +30,6 @@ public class UserController {
         return userService.updateCustomer(token, userDTO);
     }
 
-    @PostMapping("/addAccount")
-    public AccountDTO addCard(@RequestHeader("Authorization") String token, @RequestBody AccountDTO acc) throws UserNotFoundException {
-        return userService.addAccount(token, acc);
-    }
 
     @GetMapping("/cards")
     public List<AccountDTO> getCards(@RequestHeader("Authorization") String token) throws UserNotFoundException {

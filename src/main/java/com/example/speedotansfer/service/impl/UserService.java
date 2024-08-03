@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements IUser {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
@@ -72,33 +71,7 @@ public class UserService implements IUser {
         return user.toDTO();
     }
 
-    @Override
-    public AccountDTO addAccount(String token, AccountDTO acc) throws UserNotFoundException {
 
-        token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Optional<Account> res = accountRepository.findAccountByCurrencyAndUserid(acc.getCurrency().toString(), id);
-        if (res.isPresent()) {
-            throw new UserNotFoundException("You Already have an account with this Currency");
-        }
-
-        Account account = Account.builder()
-                .currency(acc.getCurrency())
-                .balance(100)
-                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
-                .cardholderName(acc.getCardholderName())
-                .cardNumber(acc.getCardNumber())
-                .cvv(acc.getCvv())
-                .expirationDate(acc.getExpirationDate())
-                .user(user)
-                .build();
-
-        accountRepository.save(account);
-
-
-        return account.toDTO();
-    }
 
     @Override
     public List<AccountDTO> getAccounts(String token) throws UserNotFoundException {

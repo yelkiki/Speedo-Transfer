@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> customerNotFoundExceptionHandling(UserNotFoundException exception, WebRequest request) {
+    public ResponseEntity<Object> userNotFoundExceptionHandling(UserNotFoundException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
                 request.getDescription(false), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
@@ -124,7 +124,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidJwtTokenException.class)
     public ResponseEntity<Object> invalidJwtTokenExceptionHandler(InvalidJwtTokenException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
-                request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
+                request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FavouriteNotFoundException.class)
+    public ResponseEntity<Object> favouriteNotFoundExceptionHandler(FavouriteNotFoundException exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
+                request.getDescription(false), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
 }

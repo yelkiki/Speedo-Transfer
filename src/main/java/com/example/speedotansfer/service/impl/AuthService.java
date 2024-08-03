@@ -6,8 +6,10 @@ import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.enums.TokenType;
+import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.PasswordNotMatchException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
+import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Token;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.TokenRepository;
@@ -15,6 +17,7 @@ import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.security.UserDetailsImpl;
 import com.example.speedotansfer.service.IAuth;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -42,7 +46,8 @@ public class AuthService implements IAuth {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public UserDTO register(RegisterDTO registerDTO) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public UserDTO register(RegisterDTO registerDTO)
+            throws UserAlreadyExistsException, PasswordNotMatchException, ConstraintViolationException{
         if (userRepository.existsByEmail(registerDTO.getEmail()))
             throw new UserAlreadyExistsException("Customer Email Already Exists");
 
@@ -55,30 +60,21 @@ public class AuthService implements IAuth {
         if (!Objects.equals(registerDTO.getPassword(), registerDTO.getConfirmPassword()))
             throw new PasswordNotMatchException("Customer Password Not Matched");
 
+
         User user = User.builder().
-                externalId(UUID.randomUUID()).
-                fullName(registerDTO.getFullName()).
-                username(registerDTO.getUsername()).
-                password(encoder.encode(registerDTO.getPassword())).
-                email(registerDTO.getEmail()).
-                gender(registerDTO.getGender()).
-                phoneNumber(registerDTO.getPhoneNumber()).
-                country(registerDTO.getCountry()).
-                birthdate(registerDTO.getBirthDate()).
-                build();
+                    externalId(UUID.randomUUID()).
+                    fullName(registerDTO.getFullName()).
+                    username(registerDTO.getUsername()).
+                    password(encoder.encode(registerDTO.getPassword())).
+                    email(registerDTO.getEmail()).
+                    gender(registerDTO.getGender()).
+                    phoneNumber(registerDTO.getPhoneNumber()).
+                    country(registerDTO.getCountry()).
+                    birthdate(registerDTO.getBirthDate()).
+                    build();
+
 
         userRepository.save(user);
-
-//        Account account = Account.builder()
-//                .currency(Currency.EGY)
-//                .balance(100)
-//                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
-//                .build();
-//
-//        account.setUser(user);
-//
-//        accountRepository.save(account);
-
 
         return user.toDTO();
     }
@@ -86,14 +82,16 @@ public class AuthService implements IAuth {
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws AuthenticationException {
         // Want to write our authentication logic
+
         Authentication authentication;
-        try {
+
+        try{
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
-        } catch (AuthenticationException e) {
-            throw new AuthenticationException("Incorrect email or password credentials provided") {
-            };
+        }catch (AuthenticationException e){
+            throw new AuthenticationException("Password or Email is incorrect {}: "){};
         }
+
         // Authenticate the user across the spring security
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

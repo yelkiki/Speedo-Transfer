@@ -50,9 +50,14 @@ public class JwtUtils {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    public Long getIdFromJwtToken(String token) {
-        return Long.parseLong(Jwts.parserBuilder().setSigningKey(key()).build()
+    public Long getIdFromJwtToken(String token) throws InvalidJwtTokenException {
+        if(validateJwtToken(token)){
+            return Long.parseLong(Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getId());
+        }
+        else{
+            throw new InvalidJwtTokenException("Invalid Token");
+        }
     }
 
     public boolean validateJwtToken(String authToken) {

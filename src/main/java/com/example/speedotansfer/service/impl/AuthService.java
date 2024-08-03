@@ -4,6 +4,7 @@ package com.example.speedotansfer.service.impl;
 import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
+import com.example.speedotansfer.dto.authDTOs.RegisterReponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.enums.TokenType;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -46,19 +48,19 @@ public class AuthService implements IAuth {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public UserDTO register(RegisterDTO registerDTO)
+    public RegisterReponseDTO register(RegisterDTO registerDTO)
             throws UserAlreadyExistsException, PasswordNotMatchException{
         if (userRepository.existsByEmail(registerDTO.getEmail()))
-            throw new UserAlreadyExistsException("Customer Email Already Exists");
+            throw new UserAlreadyExistsException("User Email Already Exists");
 
         if (userRepository.existsByUsername(registerDTO.getUsername()))
-            throw new UserAlreadyExistsException("Customer Username Already Exists");
+            throw new UserAlreadyExistsException("User Username Already Exists");
 
         if (userRepository.existsByPhoneNumber(registerDTO.getPhoneNumber()))
-            throw new UserAlreadyExistsException("Customer Phone Number Already Exists");
+            throw new UserAlreadyExistsException("User Phone Number Already Exists");
 
         if (!Objects.equals(registerDTO.getPassword(), registerDTO.getConfirmPassword()))
-            throw new PasswordNotMatchException("Customer Password Not Matched");
+            throw new PasswordNotMatchException("User Password Not Matched");
 
 
         User user = User.builder().
@@ -76,7 +78,13 @@ public class AuthService implements IAuth {
 
         userRepository.save(user);
 
-        return user.toDTO();
+
+        return RegisterReponseDTO.builder()
+                .timestamp(LocalDateTime.now())
+                .message("User Registered Successfully")
+                .details("User Registered Successfully")
+                .httpStatus(HttpStatus.CREATED)
+                .build();
     }
 
     @Override
@@ -121,5 +129,3 @@ public class AuthService implements IAuth {
     }
     
 }
-
-

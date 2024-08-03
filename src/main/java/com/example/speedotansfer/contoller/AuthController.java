@@ -3,6 +3,7 @@ package com.example.speedotansfer.contoller;
 import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
+import com.example.speedotansfer.dto.authDTOs.RegisterReponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.PasswordNotMatchException;
@@ -38,7 +39,7 @@ public class AuthController {
     @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = PasswordNotMatchException.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = ConstraintViolationException.class), mediaType = "application/json")})
     @PostMapping("/register")
-    public UserDTO register(@RequestBody @Valid RegisterDTO registerDTO)
+    public RegisterReponseDTO register(@RequestBody @Valid RegisterDTO registerDTO)
             throws UserAlreadyExistsException, PasswordNotMatchException, ConstraintViolationException {
         return authService.register(registerDTO);
     }

@@ -17,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @ControllerAdvice
@@ -35,22 +36,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> methodArgumentNotValidExceptionHandling(MethodArgumentNotValidException exception) {
+    public ResponseEntity<Object> methodArgumentNotValidExceptionHandling(MethodArgumentNotValidException e) {
+        String details = "";
+
+        List<String> errors = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .toList();
 
         ValidationFailedResponse error = ValidationFailedResponse
                 .builder()
+                .message("Validation failed for one or more fields")
+                .details(errors.toString())
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .timeStamp(LocalDateTime.now())
                 .build();
-
-        for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-
-            error.getViolations().add(ViolationErrors
-                    .builder()
-                    .fieldName(fieldError.getField())
-                    .message(fieldError.getDefaultMessage())
-                    .build());
-        }
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
@@ -58,20 +59,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     ResponseEntity<Object> onConstraintValidationException(ConstraintViolationException e) {
 
+        List<String> errors = e.getConstraintViolations()
+                .stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .toList();
+
         ValidationFailedResponse error = ValidationFailedResponse
                 .builder()
                 .httpStatus(HttpStatus.BAD_REQUEST)
+                .message("Validation failed for one or more fields")
+                .details(errors.toString())
                 .timeStamp(LocalDateTime.now())
                 .build();
-
-        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-
-            error.getViolations().add(ViolationErrors
-                    .builder()
-                    .fieldName(violation.getPropertyPath().toString())
-                    .message(violation.getMessage())
-                    .build());
-        }
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

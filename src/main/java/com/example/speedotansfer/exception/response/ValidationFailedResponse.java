@@ -14,8 +14,8 @@ import java.util.List;
 @Builder
 @RequiredArgsConstructor
 public class ValidationFailedResponse {
-
-    private final List<ViolationErrors> violations = new ArrayList<>();
+    private final String message;
+    private final String details;
     private final LocalDateTime timeStamp;
     private final HttpStatus httpStatus;
 }

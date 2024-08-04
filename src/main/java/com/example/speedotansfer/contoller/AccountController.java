@@ -1,6 +1,7 @@
 package com.example.speedotansfer.contoller;
 
 import com.example.speedotansfer.dto.accountDTO.AccountDTO;
+import com.example.speedotansfer.dto.accountDTO.AccountNumberDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
@@ -47,7 +48,7 @@ public class AccountController {
     }
 
     @PostMapping("/balance")
-    public BalanceDTO getAccountBalance(@RequestHeader("Authorization") String token,@RequestBody AccountDTO acc) throws UserNotFoundException, InvalidJwtTokenException, AuthenticationException, AccountNotFoundException {
+    public BalanceDTO getAccountBalance(@RequestHeader("Authorization") String token,@RequestBody AccountNumberDTO acc) throws UserNotFoundException, InvalidJwtTokenException, AuthenticationException, AccountNotFoundException {
         return accountService.getBalanceUsingAccountNumber(token,acc.getAccountNumber());
     }
 }

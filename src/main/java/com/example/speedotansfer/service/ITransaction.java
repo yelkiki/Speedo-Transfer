@@ -13,11 +13,11 @@ import javax.security.auth.login.AccountNotFoundException;
 
 public interface ITransaction {
 
-    TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, com.example.speedotansfer.exception.custom.AccountNotFoundException, InvalidTransferException, InvalidJwtTokenException;
+    TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, com.example.speedotansfer.exception.custom.AccountNotFoundException, InvalidTransferException, InvalidJwtTokenException, AuthenticationException;
 
 //    TransferResponseDTO transferUsingUsername(String token, SendMoneyWithUsernameDTO sendMoneyWithUsernameDTO) throws InsufficientAmountException, UserNotFoundException;
 
-    AllTransactionsDTO getHistory(String token) throws UserNotFoundException, InvalidJwtTokenException;
+    AllTransactionsDTO getHistory(String token) throws UserNotFoundException, InvalidJwtTokenException, AuthenticationException;
 
     double getExchangeRate(Currency from, Currency to);
 }

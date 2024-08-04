@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/details")
     public UserDTO getUserById(@RequestHeader("Authorization") String token)
-            throws UserNotFoundException, InvalidJwtTokenException {
+            throws UserNotFoundException {
         return userService.getUserById(token);
     }
 
@@ -36,7 +36,7 @@ public class UserController {
 
 
     @GetMapping("/cards")
-    public List<AccountDTO> getCards(@RequestHeader("Authorization") String token) throws UserNotFoundException, InvalidJwtTokenException {
+    public List<AccountDTO> getCards(@RequestHeader("Authorization") String token) {
         return userService.getAccounts(token);
     }
 }

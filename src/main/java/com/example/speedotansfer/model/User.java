@@ -67,9 +67,6 @@ public class User {
     @OneToMany(mappedBy = "favouriteUser")
     private List<Favourite> fav;
 
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
-
     // momken add role for extra bonus
 
     public UserDTO toDTO() {

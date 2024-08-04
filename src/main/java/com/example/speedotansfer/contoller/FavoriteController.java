@@ -35,7 +35,7 @@ public class FavoriteController {
     @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = InvalidJwtTokenException.class), mediaType = "application/json")})
     @PostMapping
     public Favourite addToFavorite(@RequestBody @Valid CreateFavouriteDTO createFavouriteDTO, @RequestHeader("Authorization") String token)
-            throws UserNotFoundException, InvalidJwtTokenException {
+            throws UserNotFoundException, InvalidJwtTokenException, AuthenticationException {
         return favouriteService.addToFavourites(token, createFavouriteDTO);
     }
 
@@ -48,7 +48,7 @@ public class FavoriteController {
 
     @GetMapping
     public List<Favourite> getFavorites(@RequestHeader("Authorization") String token)
-            throws UserNotFoundException, InvalidJwtTokenException {
+            throws UserNotFoundException, InvalidJwtTokenException, AuthenticationException {
         return favouriteService.getAllFavourites(token);
     }
 
@@ -59,7 +59,7 @@ public class FavoriteController {
 
     @GetMapping(params = {"page", "size"})
     public List<Favourite> getFavorites(@RequestHeader("Authorization") String token, @RequestParam("page") int page, @RequestParam("size") int size)
-            throws UserNotFoundException, InvalidJwtTokenException {
+            throws UserNotFoundException {
         return favouriteService.getAllFavourites(token, page, size);
     }
 
@@ -72,7 +72,7 @@ public class FavoriteController {
 
     @DeleteMapping("/{favouriteId}")
     public void removeFromFavorites(@PathVariable Long favouriteId, @RequestHeader("Authorization") String token)
-            throws UserNotFoundException, AuthenticationException, InvalidJwtTokenException, FavouriteNotFoundException {
+            throws UserNotFoundException, FavouriteNotFoundException {
         favouriteService.removeFromFavourites(token, favouriteId);
     }
 }

@@ -4,7 +4,9 @@ import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
 import com.example.speedotansfer.enums.Currency;
-import com.example.speedotansfer.exception.custom.*;
+import com.example.speedotansfer.exception.custom.AccountNotFoundException;
+import com.example.speedotansfer.exception.custom.InsufficientAmountException;
+import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.Transaction;
 import com.example.speedotansfer.model.User;
@@ -16,8 +18,7 @@ import com.example.speedotansfer.service.ITransaction;
 import com.example.speedotansfer.service.impl.helpers.CurrencyExchangeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,20 +28,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TransactionService implements ITransaction {
 
-    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
-    private final UserService userService;
-
+    private final RedisService redisService;
 
 
     @Override
     @Transactional
-    public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO) throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, InvalidTransferException, InvalidJwtTokenException {
+    public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO)
+            throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, AuthenticationException {
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
+
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
+
+
+        long id = redisService.getUserIdByToken(token);
+
         User sender = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Account receiverAccount = accountRepository.findAccountByAccountNumber(sendMoneyWithAccNumberDTO.getAccountNumber())
@@ -62,7 +69,7 @@ public class TransactionService implements ITransaction {
                     .build();
             transactionRepository.save(transaction);
             throw new InsufficientAmountException("Insufficient funds");
-        }else {
+        } else {
             double amountToTransfer = sendMoneyWithAccNumberDTO.getAmount();
             Currency sendCurrency = sendMoneyWithAccNumberDTO.getSendCurrency();
             Currency receiveCurrency = receiverAccount.getCurrency();
@@ -123,9 +130,15 @@ public class TransactionService implements ITransaction {
 //    }
 
     @Override
-    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException, InvalidJwtTokenException {
+    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException, AuthenticationException {
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
+
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
+
+        long id = redisService.getUserIdByToken(token);
+
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Transaction> lst = transactionRepository.findAllBySenderInternalId(user.getInternalId());
@@ -134,6 +147,7 @@ public class TransactionService implements ITransaction {
 
         return new AllTransactionsDTO(lst.stream().map(Transaction::toDto).collect(Collectors.toList()));
     }
+
 
     @Override
     public double getExchangeRate(Currency from, Currency to) {

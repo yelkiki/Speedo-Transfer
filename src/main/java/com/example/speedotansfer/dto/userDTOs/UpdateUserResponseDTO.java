@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class UpdateUserResponseDTO {
     private LocalDateTime updatedAt;
+    private String newToken;
     private String massage;
     private String details;
     private HttpStatusCode httpStatusCode;

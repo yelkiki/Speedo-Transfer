@@ -1,8 +1,7 @@
 package com.example.speedotansfer.security;
 
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
-import com.example.speedotansfer.model.Token;
-import com.example.speedotansfer.repository.TokenRepository;
+import com.example.speedotansfer.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,14 +21,13 @@ import java.util.Date;
 
 public class JwtUtils {
 
-    private final TokenRepository tokenRepository;
     @Value("${app.jwt.secret}")
     private String jwtSecret;
     @Value("${app.jwt.expiration.ms}")
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
-        // Get Current Authenticated User
+
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
@@ -45,35 +43,20 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String getUserEmailFromJwtToken(String token) throws InvalidJwtTokenException{
-        if(validateJwtToken(token)){
+    public String getUserEmailFromJwtToken(String token) throws InvalidJwtTokenException {
+        if (validateJwtToken(token)) {
             return Jwts.parserBuilder().setSigningKey(key()).build()
                     .parseClaimsJws(token).getBody().getSubject();
-        }
-        else{
-            throw new InvalidJwtTokenException("Invalid Token");
-        }
-    }
-
-    public Long getIdFromJwtToken(String token) throws InvalidJwtTokenException {
-        if(validateJwtToken(token)){
-            return Long.parseLong(Jwts.parserBuilder().setSigningKey(key()).build()
-                .parseClaimsJws(token).getBody().getId());
-        }
-        else{
+        } else {
             throw new InvalidJwtTokenException("Invalid Token");
         }
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Token token = tokenRepository.findByToken(authToken).
-                    orElseThrow(() -> new InvalidJwtTokenException("Invalid Token"));
-            if (token.isRevoked())
-                throw new InvalidJwtTokenException("Token is revoked");
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
             return true;
-        } catch (MalformedJwtException | InvalidJwtTokenException e) {
+        } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
             log.error("JWT token is expired: {}", e.getMessage());
@@ -85,5 +68,15 @@ public class JwtUtils {
             log.error("JWT signature does not match locally computed signature: {}", e.getMessage());
         }
         return false;
+    }
+
+    public String generateTokenForUpdatedUser(User user) {
+        return Jwts.builder()
+                .setSubject((user.getEmail()))
+                .setId(user.getInternalId().toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
     }
 }

@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("swagger-ui.html",
                                 "/api/auth/**", "/swagger-ui/**", "/h2-console/**",
-                                "/v3/api-docs/**", "/swagger-resources/**","/actuator/**").
+                                "/v3/api-docs/**", "/swagger-resources/**", "/actuator/**").
                         permitAll().anyRequest().authenticated())
                 .logout(logout -> logout.logoutUrl("/api/auth/logout")
                         .addLogoutHandler(logoutHandler)
@@ -46,8 +46,6 @@ public class WebSecurityConfig {
                 );
 
         http.authenticationProvider(authenticationProvider());
-        // To Run H2-Console
-        http.headers().frameOptions().disable();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

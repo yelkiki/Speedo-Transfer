@@ -1,4 +1,4 @@
-package com.example.speedotansfer.service.impl;
+package com.example.speedotansfer.service.impl.helpers;
 
 import com.example.speedotansfer.enums.Currency;
 

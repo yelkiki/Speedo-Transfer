@@ -3,7 +3,6 @@ package com.example.speedotansfer.service.impl;
 import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
-import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.*;
 import com.example.speedotansfer.model.Account;
@@ -14,13 +13,13 @@ import com.example.speedotansfer.repository.TransactionRepository;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.service.ITransaction;
+import com.example.speedotansfer.service.impl.helpers.CurrencyExchangeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.stream.Collectors;
 

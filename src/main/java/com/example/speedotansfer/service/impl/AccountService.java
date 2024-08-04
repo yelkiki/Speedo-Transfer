@@ -16,9 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.speedotansfer.service.impl.helpers.AccountNumberGenerator.generateNumber;
 
 
 @Service
@@ -94,7 +95,7 @@ public class AccountService implements IAccount {
         Account account = Account.builder()
                 .currency(acc.getCurrency())
                 .balance(100)
-                .accountNumber(new SecureRandom().nextInt(1000000000) + "")
+                .accountNumber(generateNumber())
                 .cardholderName(acc.getCardholderName())
                 .cardNumber(acc.getCardNumber())
                 .cvv(acc.getCvv())

@@ -45,11 +45,13 @@ public class AuthService implements IAuth {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final TokenRepository tokenRepository;
+    private final RedisService redisService;
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public RegisterReponseDTO register(RegisterDTO registerDTO)
             throws UserAlreadyExistsException, PasswordNotMatchException{
+
         if (userRepository.existsByEmail(registerDTO.getEmail()))
             throw new UserAlreadyExistsException("User Email Already Exists");
 
@@ -89,10 +91,8 @@ public class AuthService implements IAuth {
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws AuthenticationException {
-        // Want to write our authentication logic
 
         Authentication authentication;
-
         try{
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
@@ -110,14 +110,7 @@ public class AuthService implements IAuth {
         User user = userRepository.findUserByInternalId(userDetails.getId()).
                 orElseThrow();
 
-        Token token = Token.builder()
-                .token(jwt)
-                .tokenType(TokenType.BEARER)
-                .revoked(false)
-                .user(user)
-                .build();
-
-        tokenRepository.save(token);
+        redisService.storeToken(jwt, user.getInternalId(), 30*60);
 
         return LoginResponseDTO.builder()
                 .token(jwt)

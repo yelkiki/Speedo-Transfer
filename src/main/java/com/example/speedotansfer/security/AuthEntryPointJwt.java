@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
-    private final JacksonConfig jacksonConfig;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)

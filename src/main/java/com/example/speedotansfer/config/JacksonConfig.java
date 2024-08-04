@@ -9,11 +9,9 @@ import org.springframework.context.annotation.Primary;
 
 import java.time.LocalDateTime;
 
-@Configuration
 
 public class JacksonConfig {
-    @Bean
-    @Primary
+    @Bean    @Primary
     public ObjectMapper configureObjectMapper() {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());

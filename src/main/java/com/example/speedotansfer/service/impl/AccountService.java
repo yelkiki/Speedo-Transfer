@@ -32,11 +32,16 @@ public class AccountService implements IAccount {
             throws AccountAlreadyExists ,UserNotFoundException, InvalidJwtTokenException {
 
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
+        Long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        // Assume Account can have only one card
+        if(accountRepository.findByCardNumber(acc.getCardNumber()).isPresent()){
+            throw new AccountAlreadyExists("Error Adding Card Number");
+        }
+
         Optional<Account> res = accountRepository.
-                findAccountByUserIdSameCurrencyOrCardNumber( acc.getCardNumber(),acc.getCurrency());
+                findAccountByUserIdSameCurrencyOrCardNumber(id,acc.getCardNumber(),acc.getCurrency().toString());
 
         if(res.isPresent()){
             throw new AccountAlreadyExists("You Already Have a card with same number or currency");

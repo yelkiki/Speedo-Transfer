@@ -17,7 +17,10 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query(value = "SELECT * FROM accounts WHERE user_id = ?1", nativeQuery = true)
     List<Account> findAllByUserid(long userid);
 
-    @Query(value = "SELECT * FROM accounts as acc JOIN users as u ON u.internal_id = acc.user_id\n" +
-            "WHERE acc.card_number = ?1 OR acc.currency = ?1", nativeQuery = true)
-    Optional<Account> findAccountByUserIdSameCurrencyOrCardNumber(String cardNumber, Currency currency);
+    @Query(value = "SELECT * FROM accounts WHERE user_id = ?1 AND (card_number = ?2 OR currency = ?3)", nativeQuery = true)
+    Optional<Account> findAccountByUserIdSameCurrencyOrCardNumber(Long id,String cardNumber, String currency);
+
+    @Query(value="SELECT * FROM accounts WHERE card_number = ?1", nativeQuery = true)
+    Optional<Account> findByCardNumber(String cardNumber);
+
 }

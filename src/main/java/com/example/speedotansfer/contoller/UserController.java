@@ -1,7 +1,7 @@
 package com.example.speedotansfer.contoller;
 
 
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;

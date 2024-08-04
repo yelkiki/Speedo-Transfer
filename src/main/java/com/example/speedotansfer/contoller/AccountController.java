@@ -1,8 +1,8 @@
 package com.example.speedotansfer.contoller;
 
-import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
+import com.example.speedotansfer.exception.custom.AccountNotFoundException;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.service.impl.AccountService;
@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.AuthenticationException;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class AccountController {
     }
 
     @PostMapping("/balance")
-    public BalanceDTO getAccountBalance(@RequestBody AccountDTO acc){
-        return  new BalanceDTO();
+    public BalanceDTO getAccountBalance(@RequestHeader("Authorization") String token,@RequestBody AccountDTO acc) throws UserNotFoundException, InvalidJwtTokenException, AuthenticationException, AccountNotFoundException {
+        return accountService.getBalanceUsingAccountNumber(token,acc.getAccountNumber());
     }
 }

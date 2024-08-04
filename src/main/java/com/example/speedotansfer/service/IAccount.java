@@ -1,6 +1,6 @@
 package com.example.speedotansfer.service;
 
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;

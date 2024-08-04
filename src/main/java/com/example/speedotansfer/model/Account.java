@@ -1,7 +1,7 @@
 package com.example.speedotansfer.model;
 
 
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;

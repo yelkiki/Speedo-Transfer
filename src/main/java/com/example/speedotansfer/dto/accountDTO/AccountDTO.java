@@ -1,11 +1,9 @@
-package com.example.speedotansfer.dto.userDTOs;
+package com.example.speedotansfer.dto.accountDTO;
 
 import com.example.speedotansfer.enums.Currency;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
-
-import java.util.Date;
 
 @Data
 @AllArgsConstructor

@@ -1,7 +1,7 @@
 package com.example.speedotansfer.service.impl;
 
 
-import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
@@ -9,7 +9,6 @@ import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
-import com.example.speedotansfer.model.Token;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.TokenRepository;
@@ -17,17 +16,12 @@ import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.service.IUser;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 

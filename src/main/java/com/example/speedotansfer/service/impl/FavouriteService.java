@@ -7,7 +7,6 @@ import com.example.speedotansfer.model.Favourite;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.FavouriteRepository;
 import com.example.speedotansfer.repository.UserRepository;
-import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.service.IFavourite;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FavouriteService implements IFavourite {
 
-    private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final FavouriteRepository favouriteRepository;
     private final RedisService redisService;
@@ -34,8 +32,9 @@ public class FavouriteService implements IFavourite {
 
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
         long id = redisService.getUserIdByToken(token);
 
@@ -44,6 +43,7 @@ public class FavouriteService implements IFavourite {
 
         User favUser = userRepository.getUserFromAccountNumber(createFavouriteDTO.getAccountNumber())
                 .orElseThrow(() -> new UserNotFoundException("User With This Account Number does not exist "));
+
 
         Favourite favourite = Favourite
                 .builder()
@@ -65,9 +65,9 @@ public class FavouriteService implements IFavourite {
             throws UserNotFoundException, AuthenticationException {
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
-
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
 
         long id = redisService.getUserIdByToken(token);
@@ -82,8 +82,9 @@ public class FavouriteService implements IFavourite {
             throws UserNotFoundException, AuthenticationException {
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
         long id = redisService.getUserIdByToken(token);
 
@@ -99,8 +100,9 @@ public class FavouriteService implements IFavourite {
             throws UserNotFoundException, AuthenticationException {
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
 
         long id = redisService.getUserIdByToken(token);
@@ -114,7 +116,8 @@ public class FavouriteService implements IFavourite {
         if (favourite.getUser().getExternalId().equals(user.getExternalId())) {
             favouriteRepository.delete(favourite);
         } else {
-            throw new AuthenticationException("You are not authorized to delete this favourite"){};
+            throw new AuthenticationException("You are not authorized to delete this favourite") {
+            };
         }
     }
 

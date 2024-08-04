@@ -9,27 +9,18 @@ import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
-import com.example.speedotansfer.model.Token;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
-import com.example.speedotansfer.repository.TokenRepository;
 import com.example.speedotansfer.repository.UserRepository;
-import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.service.IUser;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -37,12 +28,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements IUser {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
-    private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
-    private final TokenRepository tokenRepository;
     private final RedisService redisService;
+    private final AuthService authService;
 
 
     @Override
@@ -52,19 +41,27 @@ public class UserService implements IUser {
 
 
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
+
+
+        long id = redisService.getUserIdByToken(token);
+
+        User user = userRepository.findUserByInternalId(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         String details = "";
 
         // We have to check before updating
-        if(userRepository.existsByEmail(updateCustomerDTO.getEmail())){
+        if (userRepository.existsByEmail(updateCustomerDTO.getEmail())) {
             throw new UserAlreadyExistsException("Email already exists");
         }
-        if(userRepository.existsByUsername(updateCustomerDTO.getUsername())){
+        if (userRepository.existsByUsername(updateCustomerDTO.getUsername())) {
             throw new UserAlreadyExistsException("Username already exists");
         }
-        if(userRepository.existsByPhoneNumber(updateCustomerDTO.getPhoneNumber())){
+        if (userRepository.existsByPhoneNumber(updateCustomerDTO.getPhoneNumber())) {
             throw new UserAlreadyExistsException("Phone number already exists");
         }
 
@@ -87,15 +84,17 @@ public class UserService implements IUser {
 
         userRepository.save(user);
 
-        // Revoke All Tokens
-        tokenRepository.findAllValidTokensByUserId(id).forEach(tokenEntity -> {
-            tokenEntity.setRevoked(true);
-            tokenRepository.save(tokenEntity);
-        });
-        // Should we Send Another Updated Token ?
+        // Delete Current Token
+        redisService.deleteToken(token);
+
+        String newToken = authService.generateToken(user);
+
+        // Generate new token
+        redisService.storeToken(newToken, user.getInternalId());
 
         return UpdateUserResponseDTO
                 .builder()
+                .newToken(newToken)
                 .updatedAt(LocalDateTime.now())
                 .massage("User updated successfully")
                 .details(details)
@@ -105,12 +104,13 @@ public class UserService implements IUser {
     }
 
     @Override
-//    @Cacheable("customer")
     public UserDTO getUserById(String token) throws UserNotFoundException {
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
+
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
         long id = redisService.getUserIdByToken(token);
 
@@ -120,14 +120,13 @@ public class UserService implements IUser {
         return user.toDTO();
     }
 
-
-
     @Override
-    public List<AccountDTO> getAccounts(String token) throws UserNotFoundException {
+    public List<AccountDTO> getAccounts(String token) {
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
         long id = redisService.getUserIdByToken(token);
 

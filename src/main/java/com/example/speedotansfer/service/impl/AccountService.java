@@ -4,19 +4,16 @@ import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.AccountAlreadyExists;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
-import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.AccountRepository;
 import com.example.speedotansfer.repository.UserRepository;
-import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.service.IAccount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -26,17 +23,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AccountService implements IAccount {
 
-    private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final RedisService redisService;
 
 
     @Override
-    public BalanceDTO getBalance(String token) throws UserNotFoundException, InvalidJwtTokenException {
+    public BalanceDTO getBalance(String token) {
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
+
+
+        long id = redisService.getUserIdByToken(token);
+
 
         List<Account> accounts = accountRepository.findAllByUserid(id);
         double balance = accounts.stream()
@@ -52,21 +54,26 @@ public class AccountService implements IAccount {
                 })
                 .sum();
 
-
         return new BalanceDTO(balance);
     }
 
     @Override
-    public BalanceDTO getBalanceUsingAccountNumber(String token, String accountNumber) throws UserNotFoundException, InvalidJwtTokenException, AccountNotFoundException, AuthenticationException {
+    public BalanceDTO getBalanceUsingAccountNumber(String token, String accountNumber) throws AccountNotFoundException, AuthenticationException {
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
+
+
+        long id = redisService.getUserIdByToken(token);
 
         Account account = accountRepository.findAccountByAccountNumber(accountNumber)
-                .orElseThrow(()-> new AccountNotFoundException("Can't account with this number"));
+                .orElseThrow(() -> new AccountNotFoundException("Can't account with this number"));
 
-        if (account.getUser().getInternalId() != id){
-            throw new AuthenticationException("You are not authorized to view this Account");
+        if (account.getUser().getInternalId() != id) {
+            throw new AuthenticationException("You are not authorized to view this Account") {
+            };
         }
         return new BalanceDTO(account.getBalance());
     }
@@ -74,12 +81,13 @@ public class AccountService implements IAccount {
 
     @Override
     public AccountDTO addAccount(String token, AccountDTO acc)
-            throws AccountAlreadyExists ,UserNotFoundException {
+            throws AccountAlreadyExists, UserNotFoundException {
 
         token = token.substring(7);
 
-        if(!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized"){};
+        if (!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized") {
+            };
 
 
         Long id = redisService.getUserIdByToken(token);
@@ -88,14 +96,14 @@ public class AccountService implements IAccount {
                 findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Assume Account can have only one card
-        if(accountRepository.findByCardNumber(acc.getCardNumber()).isPresent()){
+        if (accountRepository.findByCardNumber(acc.getCardNumber()).isPresent()) {
             throw new AccountAlreadyExists("Error Adding Card Number");
         }
 
         Optional<Account> res = accountRepository.
-                findAccountByUserIdSameCurrencyOrCardNumber(id,acc.getCardNumber(),acc.getCurrency().toString());
+                findAccountByUserIdSameCurrencyOrCardNumber(id, acc.getCardNumber(), acc.getCurrency().toString());
 
-        if(res.isPresent()){
+        if (res.isPresent()) {
             throw new AccountAlreadyExists("You Already Have a card with same number or currency");
         }
 

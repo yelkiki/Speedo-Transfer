@@ -59,7 +59,7 @@ public class FavoriteController {
 
     @GetMapping(params = {"page", "size"})
     public List<Favourite> getFavorites(@RequestHeader("Authorization") String token, @RequestParam("page") int page, @RequestParam("size") int size)
-            throws UserNotFoundException, AuthenticationException {
+            throws UserNotFoundException {
         return favouriteService.getAllFavourites(token, page, size);
     }
 
@@ -72,7 +72,7 @@ public class FavoriteController {
 
     @DeleteMapping("/{favouriteId}")
     public void removeFromFavorites(@PathVariable Long favouriteId, @RequestHeader("Authorization") String token)
-            throws UserNotFoundException, AuthenticationException, InvalidJwtTokenException, FavouriteNotFoundException {
+            throws UserNotFoundException, FavouriteNotFoundException {
         favouriteService.removeFromFavourites(token, favouriteId);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.speedotansfer.config;
 
-import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
-import com.example.speedotansfer.model.Token;
-import com.example.speedotansfer.repository.TokenRepository;
+import com.example.speedotansfer.service.impl.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +12,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
 
-    private final TokenRepository tokenRepository;
+    private final RedisService redisService;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -23,14 +21,8 @@ public class LogoutService implements LogoutHandler {
             return;
         }
         final String jwt = authHeader.substring(7);
-        try {
-            Token token = tokenRepository.findByToken(jwt)
-                    .orElseThrow(() -> new InvalidJwtTokenException("Invalid Token"));
-            // We can delete the token from the database ?? or it will cause problems ?
-            token.setRevoked(true);
-            tokenRepository.save(token);
-        } catch (InvalidJwtTokenException e) {
-            throw new RuntimeException(e);
+        if (redisService.exists(jwt)) {
+            redisService.deleteToken(jwt);
         }
     }
 }

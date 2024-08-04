@@ -8,6 +8,7 @@ import com.example.speedotansfer.exception.custom.InsufficientAmountException;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.InvalidTransferException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 
 import javax.security.auth.login.AccountNotFoundException;
 

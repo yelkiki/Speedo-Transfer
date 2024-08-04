@@ -6,6 +6,7 @@ import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
+import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.Token;
@@ -41,13 +42,25 @@ public class UserService implements IUser {
 
     @Override
     @Transactional
-    public UpdateUserResponseDTO updateUser(String token, UpdateUserDTO updateCustomerDTO) throws UserNotFoundException, InvalidJwtTokenException {
+    public UpdateUserResponseDTO updateUser(String token, UpdateUserDTO updateCustomerDTO)
+            throws UserNotFoundException, InvalidJwtTokenException {
 
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         String details = "";
+
+        // We have to check before updating
+        if(userRepository.existsByEmail(updateCustomerDTO.getEmail())){
+            throw new UserAlreadyExistsException("Email already exists");
+        }
+        if(userRepository.existsByUsername(updateCustomerDTO.getUsername())){
+            throw new UserAlreadyExistsException("Username already exists");
+        }
+        if(userRepository.existsByPhoneNumber(updateCustomerDTO.getPhoneNumber())){
+            throw new UserAlreadyExistsException("Phone number already exists");
+        }
 
         if (updateCustomerDTO.getEmail() != null) {
             user.setEmail(updateCustomerDTO.getEmail());

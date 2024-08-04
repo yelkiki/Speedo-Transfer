@@ -19,6 +19,7 @@ import com.example.speedotansfer.service.IUser;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -35,15 +36,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements IUser {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final TokenRepository tokenRepository;
+    private final RedisService redisService;
+
 
     @Override
     @Transactional
     public UpdateUserResponseDTO updateUser(String token, UpdateUserDTO updateCustomerDTO)
             throws UserNotFoundException, InvalidJwtTokenException {
+
 
         token = token.substring(7);
         long id = jwtUtils.getIdFromJwtToken(token);
@@ -102,6 +107,15 @@ public class UserService implements IUser {
 //    @Cacheable("customer")
     public UserDTO getUserById(String token) throws UserNotFoundException, InvalidJwtTokenException {
         token = token.substring(7);
+
+        if(redisService.exists(token)){
+            System.out.println("Token Was Get From Redis");
+        }
+        else{
+            System.out.println("Token Was Not Get From Redis");
+        }
+
+
         long id = jwtUtils.getIdFromJwtToken(token);
         User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         return user.toDTO();

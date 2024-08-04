@@ -45,6 +45,7 @@ public class AuthService implements IAuth {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final TokenRepository tokenRepository;
+    private final RedisService redisService;
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -118,6 +119,16 @@ public class AuthService implements IAuth {
                 .build();
 
         tokenRepository.save(token);
+
+        redisService.storeToken(token.getToken(), user.getInternalId(), 30*60);
+
+        System.out.println(token.getToken());
+        System.out.println(user.getInternalId());
+
+        System.out.println(redisService.getUserIdByToken(token.getToken()));
+
+        System.out.println(redisService.exists(token.getToken()));
+
 
         return LoginResponseDTO.builder()
                 .token(jwt)

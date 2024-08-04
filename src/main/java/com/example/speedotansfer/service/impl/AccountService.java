@@ -11,6 +11,7 @@ import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.security.JwtUtils;
 import com.example.speedotansfer.service.IAccount;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -24,15 +25,22 @@ public class AccountService implements IAccount {
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final RedisService redisService;
 
 
 
     @Override
     public AccountDTO addAccount(String token, AccountDTO acc)
-            throws AccountAlreadyExists ,UserNotFoundException, InvalidJwtTokenException {
+            throws AccountAlreadyExists ,UserNotFoundException {
 
         token = token.substring(7);
-        Long id = jwtUtils.getIdFromJwtToken(token);
+
+        if(!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized"){};
+
+
+        Long id = redisService.getUserIdByToken(token);
+
         User user = userRepository.
                 findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 

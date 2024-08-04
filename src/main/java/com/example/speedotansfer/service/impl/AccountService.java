@@ -33,7 +33,8 @@ public class AccountService implements IAccount {
 
         token = token.substring(7);
         Long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.
+                findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Assume Account can have only one card
         if(accountRepository.findByCardNumber(acc.getCardNumber()).isPresent()){

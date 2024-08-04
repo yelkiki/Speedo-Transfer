@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.List;
 @Builder
 @RequiredArgsConstructor
 public class ValidationFailedResponse {
-
-    private final List<ViolationErrors> violations = new ArrayList<>();
+    private final String message;
+    private final String details;
     private final LocalDateTime timeStamp;
     private final HttpStatus httpStatus;
 }

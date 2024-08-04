@@ -45,9 +45,14 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String getUserEmailFromJwtToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key()).build()
-                .parseClaimsJws(token).getBody().getSubject();
+    public String getUserEmailFromJwtToken(String token) throws InvalidJwtTokenException{
+        if(validateJwtToken(token)){
+            return Jwts.parserBuilder().setSigningKey(key()).build()
+                    .parseClaimsJws(token).getBody().getSubject();
+        }
+        else{
+            throw new InvalidJwtTokenException("Invalid Token");
+        }
     }
 
     public Long getIdFromJwtToken(String token) throws InvalidJwtTokenException {

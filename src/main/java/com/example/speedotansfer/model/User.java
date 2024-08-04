@@ -53,6 +53,7 @@ public class User {
     private Country country;
     @Column(nullable = false)
     private LocalDate birthdate;
+
     @OneToMany(mappedBy = "user")
     private List<Account> account;
 

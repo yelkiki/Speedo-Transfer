@@ -51,6 +51,7 @@ public class AuthService implements IAuth {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public RegisterReponseDTO register(RegisterDTO registerDTO)
             throws UserAlreadyExistsException, PasswordNotMatchException{
+
         if (userRepository.existsByEmail(registerDTO.getEmail()))
             throw new UserAlreadyExistsException("User Email Already Exists");
 

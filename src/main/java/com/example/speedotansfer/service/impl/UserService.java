@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,28 +106,31 @@ public class UserService implements IUser {
 
     @Override
 //    @Cacheable("customer")
-    public UserDTO getUserById(String token) throws UserNotFoundException, InvalidJwtTokenException {
+    public UserDTO getUserById(String token) throws UserNotFoundException {
         token = token.substring(7);
 
-        if(redisService.exists(token)){
-            System.out.println("Token Was Get From Redis");
-        }
-        else{
-            System.out.println("Token Was Not Get From Redis");
-        }
+        if(!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized"){};
 
+        long id = redisService.getUserIdByToken(token);
 
-        long id = jwtUtils.getIdFromJwtToken(token);
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.findUserByInternalId(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
         return user.toDTO();
     }
 
 
 
     @Override
-    public List<AccountDTO> getAccounts(String token) throws UserNotFoundException, InvalidJwtTokenException {
+    public List<AccountDTO> getAccounts(String token) throws UserNotFoundException {
         token = token.substring(7);
-        long id = jwtUtils.getIdFromJwtToken(token);
+
+        if(!redisService.exists(token))
+            throw new AuthenticationException("Unauthorized"){};
+
+        long id = redisService.getUserIdByToken(token);
+
         accountRepository.findAllByUserid(id);
         return accountRepository.findAllByUserid(id).stream().map(Account::toDTO).collect(Collectors.toList());
     }

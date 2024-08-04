@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 
@@ -14,4 +15,5 @@ public class ErrorDetails {
     private String message;
     private String details;
     private HttpStatus httpStatus;
+
 }

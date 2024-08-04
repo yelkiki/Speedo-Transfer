@@ -2,6 +2,7 @@ package com.example.speedotansfer.contoller;
 
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.userDTOs.AccountDTO;
+import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.service.impl.AccountService;
@@ -30,5 +31,21 @@ public class AccountController {
     public AccountDTO addCard(@RequestHeader("Authorization") String token, @RequestBody AccountDTO acc)
             throws UserNotFoundException, InvalidJwtTokenException {
         return accountService.addAccount(token, acc);
+    }
+
+    @Operation(summary = "Get Summation Balance of all accounts in EGP Currency")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = UserNotFoundException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = InvalidJwtTokenException.class), mediaType = "application/json")})
+
+    @GetMapping("/balance")
+    public BalanceDTO getBalance(@RequestHeader("Authorization") String token)
+            throws UserNotFoundException, InvalidJwtTokenException {
+        return accountService.getBalance(token);
+    }
+
+    @PostMapping("/balance")
+    public BalanceDTO getAccountBalance(@RequestBody AccountDTO acc){
+        return  new BalanceDTO();
     }
 }

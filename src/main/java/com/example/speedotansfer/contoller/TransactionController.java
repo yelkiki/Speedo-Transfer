@@ -1,9 +1,8 @@
 package com.example.speedotansfer.contoller;
 
-import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
-import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
-import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
+import com.example.speedotansfer.dto.transactionDTOs.*;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
+import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.*;
 import com.example.speedotansfer.service.impl.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,16 +22,6 @@ public class TransactionController {
     private final TransactionService transactionService;
 
 
-    @Operation(summary = "Get Summation Balance of all accounts in EGP Currency")
-    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = UserNotFoundException.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = InvalidJwtTokenException.class), mediaType = "application/json")})
-
-    @GetMapping("/balance")
-    public BalanceDTO getBalance(@RequestHeader("Authorization") String token)
-            throws UserNotFoundException, InvalidJwtTokenException {
-        return transactionService.getBalance(token);
-    }
 
     @Operation(summary = "Get All Transactions")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AllTransactionsDTO.class), mediaType = "application/json")})
@@ -57,6 +46,11 @@ public class TransactionController {
 //        return transactionService.transferUsingUsername(token,details);
 //
 //    }
+
+    @GetMapping("/convert/{from}/{to}")
+    public GetExchangeRateDTO getExchangeRate(@PathVariable Currency from, @PathVariable Currency to){
+        return new GetExchangeRateDTO(transactionService.getExchangeRate(from, to));
+    }
 
 
 }

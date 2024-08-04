@@ -10,9 +10,11 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
-    @Query(value = "SELECT t from tokens as t JOIN users as u ON u.user_id = t.user_id WHERE u.user_id = ?1 AND t.revoked = false",
+    @Query(value = "SELECT t.* from tokens as t JOIN users as u ON u.internal_id = t.user_id WHERE u.internal_id = ?1 AND t.revoked = false",
             nativeQuery = true)
     List<Token> findAllValidTokensByUserId(Long userId);
 
     Optional<Token> findByToken(String token) throws InvalidJwtTokenException;
+
+    Optional<Token> findById(Long id);
 }

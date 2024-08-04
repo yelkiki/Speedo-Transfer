@@ -3,6 +3,7 @@ package com.example.speedotansfer.contoller;
 
 import com.example.speedotansfer.dto.userDTOs.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
+import com.example.speedotansfer.dto.userDTOs.UpdateUserResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
 import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
@@ -22,12 +23,14 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/details")
-    public UserDTO getUserById(@RequestHeader("Authorization") String token) throws UserNotFoundException, InvalidJwtTokenException {
+    public UserDTO getUserById(@RequestHeader("Authorization") String token)
+            throws UserNotFoundException, InvalidJwtTokenException {
         return userService.getUserById(token);
     }
 
     @PutMapping("/update")
-    public UserDTO updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserDTO userDTO) throws UserNotFoundException, InvalidJwtTokenException {
+    public UpdateUserResponseDTO updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserDTO userDTO)
+            throws UserNotFoundException, InvalidJwtTokenException {
         return userService.updateUser(token, userDTO);
     }
 

@@ -4,6 +4,7 @@ import com.example.speedotansfer.dto.favoriteDTOs.CreateFavouriteDTO;
 import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.FavouriteNotFoundException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
+import com.example.speedotansfer.exception.response.ErrorDetails;
 import com.example.speedotansfer.model.Favourite;
 import com.example.speedotansfer.service.impl.FavouriteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,8 +42,8 @@ public class FavoriteController {
 
     @Operation(summary = "Get All Favourites")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = Favourite.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = UserNotFoundException.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", description = "User Not Found ", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
 
     @GetMapping
     public List<Favourite> getFavorites
@@ -53,8 +54,8 @@ public class FavoriteController {
 
     @Operation(summary = "Get All Favourites based On page and size")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = Favourite.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = UserNotFoundException.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", description = "User Not Found", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
 
     @GetMapping(params = {"page", "size"})
     public List<Favourite> getFavorites
@@ -65,9 +66,9 @@ public class FavoriteController {
 
     @Operation(summary = "Remove From Favorites")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = UserNotFoundException.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema(implementation = FavouriteNotFoundException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", description = "User Not Found ", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404", description = "FavouriteNotFoundException", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
 
     @DeleteMapping("/{favouriteId}")
     public void removeFromFavorites(@PathVariable Long favouriteId, @RequestHeader("Authorization") String token)

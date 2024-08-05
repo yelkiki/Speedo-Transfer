@@ -4,8 +4,8 @@ import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.accountDTO.AccountNumberDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
-import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
+import com.example.speedotansfer.exception.response.ErrorDetails;
 import com.example.speedotansfer.service.impl.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +25,7 @@ public class AccountController {
 
     @Operation(summary = "Add new Account to User")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AccountDTO.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse
     @PostMapping()
     public AccountDTO addCard(@RequestHeader("Authorization") String token, @RequestBody AccountDTO acc)
@@ -35,7 +35,7 @@ public class AccountController {
 
     @Operation(summary = "Get Summation Balance of all accounts in EGP Currency")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @GetMapping("/balance")
     public BalanceDTO getBalance(@RequestHeader("Authorization") String token) {
         return accountService.getBalance(token);
@@ -43,7 +43,7 @@ public class AccountController {
 
     @Operation(summary = "Get Account Balance using Account Number")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @PostMapping("/balance")
     public BalanceDTO getAccountBalance(@RequestHeader("Authorization") String token, @RequestBody AccountNumberDTO acc)
             throws AccountNotFoundException {

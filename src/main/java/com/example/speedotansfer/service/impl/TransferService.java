@@ -69,6 +69,19 @@ public class TransferService implements ITansfer {
             throw new InsufficientAmountException("Insufficient funds");
         }
 
+        if (receiverAccount.getCurrency() != sendMoneyWithAccNumberDTO.getReceiveCurrency()){
+            Transaction transaction = Transaction.builder()
+                    .status(false)
+                    .receiver(receiver)
+                    .sender(sender)
+                    .amount(sendMoneyWithAccNumberDTO.getAmount())
+                    .currency(sendMoneyWithAccNumberDTO.getSendCurrency())
+                    .build();
+            transactionRepository.save(transaction);
+            throw new InsufficientAmountException("This Account is not with same Currency");
+        }
+
+
         double amountToTransfer = sendMoneyWithAccNumberDTO.getAmount();
         Currency sendCurrency = sendMoneyWithAccNumberDTO.getSendCurrency();
         Currency receiveCurrency = receiverAccount.getCurrency();

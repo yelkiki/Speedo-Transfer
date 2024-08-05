@@ -30,7 +30,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", description = "User Not Found", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthenticated", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/details")
     public UserDTO getUserById(@RequestHeader("Authorization") String token)
             throws UserNotFoundException {
@@ -42,6 +42,7 @@ public class UserController {
     @ApiResponse(responseCode = "404", description = "User Not Found", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthenticated", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @PutMapping("/update")
+    @CrossOrigin(origins = "http://localhost:4200")
     public UpdateUserResponseDTO updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserDTO userDTO)
             throws UserNotFoundException {
         return userService.updateUser(token, userDTO);
@@ -51,6 +52,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AccountDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthenticated", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @GetMapping("/cards")
+    @CrossOrigin(origins = "http://localhost:4200")
     public List<AccountDTO> getCards(@RequestHeader("Authorization") String token) {
         return userService.getAccounts(token);
     }

@@ -28,6 +28,7 @@ public class AccountController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse
     @PostMapping()
+    @CrossOrigin(origins = "http://localhost:4200")
     public AccountDTO addCard(@RequestHeader("Authorization") String token, @RequestBody AccountDTO acc)
             throws UserNotFoundException {
         return accountService.addAccount(token, acc);
@@ -37,6 +38,7 @@ public class AccountController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @GetMapping("/balance")
+    @CrossOrigin(origins = "http://localhost:4200")
     public BalanceDTO getBalance(@RequestHeader("Authorization") String token) {
         return accountService.getBalance(token);
     }
@@ -45,6 +47,7 @@ public class AccountController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @PostMapping("/balance")
+    @CrossOrigin(origins = "http://localhost:4200")
     public BalanceDTO getAccountBalance(@RequestHeader("Authorization") String token, @RequestBody AccountNumberDTO acc)
             throws AccountNotFoundException {
         return accountService.getBalanceUsingAccountNumber(token, acc.getAccountNumber());

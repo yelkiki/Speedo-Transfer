@@ -46,10 +46,10 @@ public class AccountService implements IAccount {
         double balance = accounts.stream()
                 .mapToDouble(account -> {
                     switch (account.getCurrency()) {
-                        case USD:
-                            return account.getBalance() * 48;
+                        case EGY:
+                            return account.getBalance() * 0.02;
                         case EUR:
-                            return account.getBalance() * 53;
+                            return account.getBalance() * 1.09;
                         default:
                             return account.getBalance();
                     }

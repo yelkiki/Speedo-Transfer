@@ -5,6 +5,7 @@ import com.example.speedotansfer.dto.authDTOs.LoginRequestDTO;
 import com.example.speedotansfer.dto.authDTOs.LoginResponseDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterDTO;
 import com.example.speedotansfer.dto.authDTOs.RegisterReponseDTO;
+import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.PasswordNotMatchException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.model.User;
@@ -89,15 +90,13 @@ public class AuthService implements IAuth {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
         } catch (AuthenticationException e) {
-            throw new AuthenticationException("Password or Email is incorrect {}: ") {
-            };
+            throw new AuthenticationErrorException("Password or Email is incorrect {}: ");
         }
 
-        // Authenticate the user across the spring security
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtUtils.generateJwtToken(authentication);
-        // Get Current Authenticated User
+
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         User user = userRepository.findUserByInternalId(userDetails.getId()).

@@ -5,6 +5,7 @@ import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
 import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
+import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.InsufficientAmountException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
@@ -18,7 +19,6 @@ import com.example.speedotansfer.service.ITransaction;
 import com.example.speedotansfer.service.impl.helpers.CurrencyExchangeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,17 +38,17 @@ public class TransactionService implements ITransaction {
     @Override
     @Transactional
     public TransferResponseDTO transferUsingAccNumber(String token, SendMoneyWithAccNumberDTO sendMoneyWithAccNumberDTO)
-            throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException, AuthenticationException {
+            throws InsufficientAmountException, UserNotFoundException, AccountNotFoundException {
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
 
         long id = redisService.getUserIdByToken(token);
 
-        User sender = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User sender = userRepository.findUserByInternalId(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Account receiverAccount = accountRepository.findAccountByAccountNumber(sendMoneyWithAccNumberDTO.getAccountNumber())
                 .orElseThrow(() -> new UserNotFoundException("Could not find receiver's account"));
@@ -130,16 +130,16 @@ public class TransactionService implements ITransaction {
 //    }
 
     @Override
-    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException, AuthenticationException {
+    public AllTransactionsDTO getHistory(String token) throws UserNotFoundException {
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
         long id = redisService.getUserIdByToken(token);
 
-        User user = userRepository.findUserByInternalId(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.findUserByInternalId(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Transaction> lst = transactionRepository.findAllBySenderInternalId(user.getInternalId());
         lst.addAll(transactionRepository.findAllByReceiverInternalId(user.getInternalId()));

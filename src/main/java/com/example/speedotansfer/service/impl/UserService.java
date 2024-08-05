@@ -5,7 +5,7 @@ import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserDTO;
 import com.example.speedotansfer.dto.userDTOs.UpdateUserResponseDTO;
 import com.example.speedotansfer.dto.userDTOs.UserDTO;
-import com.example.speedotansfer.exception.custom.InvalidJwtTokenException;
+import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.UserAlreadyExistsException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
@@ -15,7 +15,6 @@ import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.service.IUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,15 +36,13 @@ public class UserService implements IUser {
     @Override
     @Transactional
     public UpdateUserResponseDTO updateUser(String token, UpdateUserDTO updateCustomerDTO)
-            throws UserNotFoundException, InvalidJwtTokenException {
+            throws UserNotFoundException {
 
 
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
-
+            throw new AuthenticationErrorException("Unauthorized");
 
         long id = redisService.getUserIdByToken(token);
 
@@ -107,10 +104,8 @@ public class UserService implements IUser {
     public UserDTO getUserById(String token) throws UserNotFoundException {
         token = token.substring(7);
 
-
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
         long id = redisService.getUserIdByToken(token);
 
@@ -125,14 +120,13 @@ public class UserService implements IUser {
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
         long id = redisService.getUserIdByToken(token);
 
         accountRepository.findAllByUserid(id);
+
         return accountRepository.findAllByUserid(id).stream().map(Account::toDTO).collect(Collectors.toList());
     }
-
-
+    
 }

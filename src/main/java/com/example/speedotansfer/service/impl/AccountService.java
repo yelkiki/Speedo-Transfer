@@ -5,6 +5,7 @@ import com.example.speedotansfer.dto.accountDTO.AccountDTO;
 import com.example.speedotansfer.dto.userDTOs.BalanceDTO;
 import com.example.speedotansfer.exception.custom.AccountAlreadyExists;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
+import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Account;
 import com.example.speedotansfer.model.User;
@@ -35,8 +36,7 @@ public class AccountService implements IAccount {
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
 
         long id = redisService.getUserIdByToken(token);
@@ -64,8 +64,7 @@ public class AccountService implements IAccount {
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
 
         long id = redisService.getUserIdByToken(token);
@@ -88,8 +87,7 @@ public class AccountService implements IAccount {
         token = token.substring(7);
 
         if (!redisService.exists(token))
-            throw new AuthenticationException("Unauthorized") {
-            };
+            throw new AuthenticationErrorException("Unauthorized");
 
 
         Long id = redisService.getUserIdByToken(token);

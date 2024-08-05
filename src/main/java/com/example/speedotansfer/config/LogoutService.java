@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+
 @Configuration
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {

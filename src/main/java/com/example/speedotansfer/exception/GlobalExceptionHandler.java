@@ -3,20 +3,16 @@ package com.example.speedotansfer.exception;
 import com.example.speedotansfer.exception.custom.*;
 import com.example.speedotansfer.exception.response.ErrorDetails;
 import com.example.speedotansfer.exception.response.ValidationFailedResponse;
-import com.example.speedotansfer.exception.response.ViolationErrors;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -89,8 +85,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Object> authenticationExceptionHandling(AuthenticationException exception, WebRequest request) {
+    @ExceptionHandler(AuthenticationErrorException.class)
+    public ResponseEntity<Object> authenticationExceptionHandling(AuthenticationErrorException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now()
                 , String.format("Incorrect email or password credentials provided. [ %s ]", exception.getMessage()),
                 request.getDescription(false), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
@@ -138,6 +134,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),
                 request.getDescription(false), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Object> usernameNotFoundExceptionHandler(UsernameNotFoundException exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(LocalDateTime.now(), exception.getMessage(),

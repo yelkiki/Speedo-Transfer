@@ -1,10 +1,8 @@
 package com.example.speedotansfer.contoller;
 
 import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
-import com.example.speedotansfer.dto.transactionDTOs.GetExchangeRateDTO;
 import com.example.speedotansfer.dto.transactionDTOs.SendMoneyWithAccNumberDTO;
 import com.example.speedotansfer.dto.transactionDTOs.TransferResponseDTO;
-import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.AccountNotFoundException;
 import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.InsufficientAmountException;
@@ -50,13 +48,6 @@ public class TransactionController {
             throws UserNotFoundException, InsufficientAmountException, AccountNotFoundException {
         return transferService.transferUsingAccNumber(token, details);
 
-    }
-
-    @Operation(summary = "Get Exchange Rate")
-    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = GetExchangeRateDTO.class), mediaType = "application/json")})
-    @GetMapping("/convert/{from}/{to}")
-    public GetExchangeRateDTO getExchangeRate(@PathVariable Currency from, @PathVariable Currency to) {
-        return new GetExchangeRateDTO(transactionService.getExchangeRate(from, to));
     }
 
 

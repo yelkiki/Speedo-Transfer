@@ -36,7 +36,6 @@ public class AccountController {
     @Operation(summary = "Get Summation Balance of all accounts in EGP Currency")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BalanceDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
-
     @GetMapping("/balance")
     public BalanceDTO getBalance(@RequestHeader("Authorization") String token) {
         return accountService.getBalance(token);

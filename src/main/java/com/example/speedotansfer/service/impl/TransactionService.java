@@ -1,7 +1,6 @@
 package com.example.speedotansfer.service.impl;
 
 import com.example.speedotansfer.dto.transactionDTOs.AllTransactionsDTO;
-import com.example.speedotansfer.enums.Currency;
 import com.example.speedotansfer.exception.custom.AuthenticationErrorException;
 import com.example.speedotansfer.exception.custom.UserNotFoundException;
 import com.example.speedotansfer.model.Transaction;
@@ -9,7 +8,6 @@ import com.example.speedotansfer.model.User;
 import com.example.speedotansfer.repository.TransactionRepository;
 import com.example.speedotansfer.repository.UserRepository;
 import com.example.speedotansfer.service.ITransaction;
-import com.example.speedotansfer.service.impl.helpers.CurrencyExchangeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +43,4 @@ public class TransactionService implements ITransaction {
     }
 
 
-    @Override
-    public double getExchangeRate(Currency from, Currency to) {
-        return CurrencyExchangeService.getExchangeRate(from, to);
-    }
 }

@@ -32,7 +32,8 @@ public class FavoriteController {
     @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = DataIntegrityViolationException.class), mediaType = "application/json")})
     @PostMapping
-    public Favourite addToFavorite(@RequestBody @Valid CreateFavouriteDTO createFavouriteDTO, @RequestHeader("Authorization") String token)
+    public Favourite addToFavorite
+            (@RequestBody @Valid CreateFavouriteDTO createFavouriteDTO, @RequestHeader("Authorization") String token)
             throws UserNotFoundException {
         return favouriteService.addToFavourites(token, createFavouriteDTO);
     }
@@ -44,7 +45,8 @@ public class FavoriteController {
     @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
 
     @GetMapping
-    public List<Favourite> getFavorites(@RequestHeader("Authorization") String token)
+    public List<Favourite> getFavorites
+            (@RequestHeader("Authorization") String token)
             throws UserNotFoundException {
         return favouriteService.getAllFavourites(token);
     }
@@ -55,7 +57,8 @@ public class FavoriteController {
     @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
 
     @GetMapping(params = {"page", "size"})
-    public List<Favourite> getFavorites(@RequestHeader("Authorization") String token, @RequestParam("page") int page, @RequestParam("size") int size)
+    public List<Favourite> getFavorites
+            (@RequestHeader("Authorization") String token, @RequestParam("page") int page, @RequestParam("size") int size)
             throws UserNotFoundException {
         return favouriteService.getAllFavourites(token, page, size);
     }

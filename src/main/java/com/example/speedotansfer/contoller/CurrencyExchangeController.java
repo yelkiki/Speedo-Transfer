@@ -24,7 +24,7 @@ public class CurrencyExchangeController {
 
     @Operation(summary = "Get Exchange Rate")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = GetExchangeRateDTO.class), mediaType = "application/json")})
-    @GetMapping("/convert/{from}/{to}")
+    @GetMapping("/{from}/{to}")
     public GetExchangeRateDTO getExchangeRate(@PathVariable Currency from, @PathVariable Currency to) {
         return new GetExchangeRateDTO(currencyExchangeService.getExchangeRate(from, to));
     }

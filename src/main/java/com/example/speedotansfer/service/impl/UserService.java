@@ -124,7 +124,7 @@ public class UserService implements IUser {
 
         long id = redisService.getUserIdByToken(token);
 
-        accountRepository.findAllByUserid(id);
+//        accountRepository.findAllByUserid(id);
 
         return accountRepository.findAllByUserid(id).stream().map(Account::toDTO).collect(Collectors.toList());
     }

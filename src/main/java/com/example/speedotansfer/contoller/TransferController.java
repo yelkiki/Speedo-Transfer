@@ -26,10 +26,13 @@ public class TransferController {
 
     @Operation(summary = "Transfer Money using Account Number")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = TransferResponseDTO.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "404", description = "User Not Found", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
-    @ApiResponse(responseCode = "401", description = "Unauthenticated", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "404",
+            content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
+    @ApiResponse(responseCode = "401",
+            content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "400", description = "Insufficient Amount", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:4200")
     public TransferResponseDTO transferUsingAccountNumber
             (@RequestHeader("Authorization") String token, @RequestBody @Valid SendMoneyWithAccNumberDTO details)
             throws UserNotFoundException, InsufficientAmountException, AccountNotFoundException {

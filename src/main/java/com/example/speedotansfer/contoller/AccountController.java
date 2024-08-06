@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/account")
 @Validated
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedHeaders = "*")
+@CrossOrigin(origins = "*")
 public class AccountController {
 
     private final AccountService accountService;

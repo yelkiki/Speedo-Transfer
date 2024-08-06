@@ -22,8 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 @Validated
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedHeaders = "*")
-
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;

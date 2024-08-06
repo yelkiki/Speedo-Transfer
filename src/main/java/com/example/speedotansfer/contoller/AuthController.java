@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 @Validated
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthService authService;
@@ -33,13 +34,11 @@ public class AuthController {
     @ApiResponse(responseCode = "400", description = "Password do not match ", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "400", description = "Constraint Violation", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @PostMapping("/register")
-    @CrossOrigin(origins = "http://localhost:4200")
     public RegisterReponseDTO register(@RequestBody @Valid RegisterDTO registerDTO)
             throws UserAlreadyExistsException, PasswordNotMatchException, ConstraintViolationException {
         return authService.register(registerDTO);
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @Operation(summary = "Login user and generate JWT")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = LoginResponseDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})

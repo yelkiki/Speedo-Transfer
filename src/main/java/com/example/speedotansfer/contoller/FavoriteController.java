@@ -23,8 +23,7 @@ import java.util.List;
 @RequestMapping("api/favorites")
 @RequiredArgsConstructor
 @Validated
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedHeaders = "*")
-
+@CrossOrigin(origins = "*")
 public class FavoriteController {
 
     private final FavouriteService favouriteService;

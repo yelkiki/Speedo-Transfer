@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/transaction")
 @Validated
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedHeaders = "*")
-
+@CrossOrigin(origins = "*")
 public class TransactionController {
     private final TransactionService transactionService;
     private final TransferService transferService;

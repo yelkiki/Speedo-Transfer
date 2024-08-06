@@ -23,3 +23,8 @@ This backend service provides a set of RESTful APIs to manage user accounts, han
 
 https://speedo-transfer-437e318f5416.herokuapp.com/swagger-ui/index.html#/
 
+## You can test APIs end-points using this base-url
+
+https://speedo-transfer-437e318f5416.herokuapp.com
+
+

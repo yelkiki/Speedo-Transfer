@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/transaction")
 @Validated
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedHeaders = "*")
+
 public class TransactionController {
     private final TransactionService transactionService;
     private final TransferService transferService;
@@ -26,7 +28,6 @@ public class TransactionController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AllTransactionsDTO.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", description = "User Not Found", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthenticated", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public AllTransactionsDTO getTransactions(@RequestHeader("Authorization") String token)
             throws UserNotFoundException {

@@ -23,6 +23,8 @@ import java.util.List;
 @RequestMapping("api/favorites")
 @RequiredArgsConstructor
 @Validated
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedHeaders = "*")
+
 public class FavoriteController {
 
     private final FavouriteService favouriteService;
@@ -33,7 +35,6 @@ public class FavoriteController {
     @ApiResponse(responseCode = "401", content = {@Content(schema = @Schema(implementation = AuthenticationErrorException.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema(implementation = DataIntegrityViolationException.class), mediaType = "application/json")})
     @PostMapping
-    @CrossOrigin(origins = "http://localhost:4200")
     public Favourite addToFavorite
             (@RequestBody @Valid CreateFavouriteDTO createFavouriteDTO, @RequestHeader("Authorization") String token)
             throws UserNotFoundException {
@@ -45,7 +46,6 @@ public class FavoriteController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = Favourite.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", description = "User Not Found ", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public List<Favourite> getFavorites
             (@RequestHeader("Authorization") String token)
@@ -57,7 +57,6 @@ public class FavoriteController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = Favourite.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "404", description = "User Not Found", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(schema = @Schema(implementation = ErrorDetails.class), mediaType = "application/json")})
-    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(params = {"page", "size"})
     public List<Favourite> getFavorites
             (@RequestHeader("Authorization") String token, @RequestParam("page") int page, @RequestParam("size") int size)

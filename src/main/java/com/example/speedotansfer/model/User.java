@@ -19,7 +19,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "users", indexes = @Index(columnList = "internalId", name = "internalId"))
+@Table(name = "users", indexes = @Index(columnList = "internalId", name = "internalId_idx", unique = true))
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

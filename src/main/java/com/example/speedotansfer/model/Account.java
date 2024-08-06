@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "accounts")
+@Table(name = "accounts", indexes = {@Index(columnList = "accountNumber", name = "accountNumber_idx", unique = true)})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +32,7 @@ public class Account {
     private Currency currency = Currency.EGY;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(unique = true, nullable = false)
@@ -48,7 +48,7 @@ public class Account {
     @Pattern(regexp = "(0[1-9]|1[0-2])/\\d{2}", message = "Expiration date must be in MM/YY format")
     private String expirationDate;
 
-    public AccountDTO toDTO(){
+    public AccountDTO toDTO() {
         return AccountDTO.builder()
                 .accountNumber(accountNumber)
                 .balance(balance)
